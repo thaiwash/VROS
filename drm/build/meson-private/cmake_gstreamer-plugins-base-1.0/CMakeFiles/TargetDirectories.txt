@@ -1,0 +1,2 @@
+/home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-plugins-base-1.0/CMakeFiles/rebuild_cache.dir
+/home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-plugins-base-1.0/CMakeFiles/edit_cache.dir

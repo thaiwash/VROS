@@ -1,0 +1,173 @@
+Build started at 2020-08-15T20:30:02.889156
+Main binary: /usr/bin/python3
+Python system: Linux
+The Meson build system
+Version: 0.49.2
+Source dir: /home/pi/project/VROS/drm
+Build dir: /home/pi/project/VROS/drm/build
+Build type: native build
+Project name: kmscube
+Project version: 0.0.1
+Sanity testing C compiler: cc
+Is cross compiler: False.
+Sanity check compiler command line: cc /home/pi/project/VROS/drm/build/meson-private/sanitycheckc.c -o /home/pi/project/VROS/drm/build/meson-private/sanitycheckc.exe
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/pi/project/VROS/drm/build/meson-private/sanitycheckc.exe
+Native C compiler: cc (gcc 8.3.0 "cc (Raspbian 8.3.0-6+rpi1) 8.3.0")
+Build machine cpu family: arm
+Build machine cpu: armv7l
+Running compile:
+Working directory:  /tmp/tmplek7gnbz
+Command line:  cc /tmp/tmplek7gnbz/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmplek7gnbz/output.exe -O0 -Wl,--start-group -lm -Wl,--end-group -Wl,--allow-shlib-undefined 
+
+Code:
+ int main(int argc, char **argv) { return 0; }
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Library m found: YES
+Dependency threads found: YES 
+Found pkg-config: /usr/bin/pkg-config (0.29)
+Determining dependency 'libdrm' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion libdrm` -> 0
+2.4.100
+Called `/usr/bin/pkg-config --cflags libdrm` -> 0
+-I/usr/include/libdrm
+Called `/usr/bin/pkg-config libdrm --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -ldrm
+Called `/usr/bin/pkg-config libdrm --libs` -> 0
+-ldrm
+Running compile:
+Working directory:  /tmp/tmpmcdxoad2
+Command line:  cc /tmp/tmpmcdxoad2/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpmcdxoad2/output.exe -O0 
+
+Code:
+ #include<stdio.h>
+        
+        int main(int argc, char **argv) {
+            printf("%ld\n", (long)(sizeof(void *)));
+            return 0;
+        };
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Program stdout:
+
+4
+
+Program stderr:
+
+
+Running compile:
+Working directory:  /tmp/tmpqrhzhiwy
+Command line:  cc /tmp/tmpqrhzhiwy/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -c -o /tmp/tmpqrhzhiwy/output.obj -O0 --print-search-dirs 
+
+Code:
+ 
+Compiler stdout:
+ install: /usr/lib/gcc/arm-linux-gnueabihf/8/
+programs: =/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/bin/
+libraries: =/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/lib/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/lib/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/lib/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../:/lib/arm-linux-gnueabihf/8/:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/8/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/
+
+Compiler stderr:
+ 
+Dependency libdrm found: YES 2.4.100
+Determining dependency 'gbm' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion gbm` -> 0
+19.3.2
+Called `/usr/bin/pkg-config --cflags gbm` -> 0
+
+Called `/usr/bin/pkg-config gbm --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lgbm
+Called `/usr/bin/pkg-config gbm --libs` -> 0
+-lgbm
+Dependency gbm found: YES 19.3.2
+Determining dependency 'egl' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion egl` -> 0
+1.5
+Called `/usr/bin/pkg-config --cflags egl` -> 0
+
+Called `/usr/bin/pkg-config egl --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lEGL
+Called `/usr/bin/pkg-config egl --libs` -> 0
+-lEGL
+Dependency egl found: YES 1.5
+Determining dependency 'glesv2' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion glesv2` -> 0
+3.2
+Called `/usr/bin/pkg-config --cflags glesv2` -> 0
+
+Called `/usr/bin/pkg-config glesv2 --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lGLESv2
+Called `/usr/bin/pkg-config glesv2 --libs` -> 0
+-lGLESv2
+Dependency glesv2 found: YES 3.2
+Determining dependency 'libpng' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion libpng` -> 0
+1.6.36
+Called `/usr/bin/pkg-config --cflags libpng` -> 0
+-I/usr/include/libpng16
+Called `/usr/bin/pkg-config libpng --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lpng16 -lz
+Called `/usr/bin/pkg-config libpng --libs` -> 0
+-lpng16 -lz
+Dependency libpng found: YES 1.6.36
+Determining dependency 'gstreamer-1.0' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion gstreamer-1.0` -> 1
+
+Found CMake: /usr/bin/cmake (3.13.4)
+
+Determining dependency 'gstreamer-1.0' with CMake executable '/usr/bin/cmake'
+Try CMake generator: auto
+Called `/usr/bin/cmake --trace-expand -DNAME=gstreamer-1.0 .` in /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-1.0 -> 0
+Dependency gstreamer-1.0 found: NO (tried pkgconfig and cmake)
+Determining dependency 'gstreamer-plugins-base-1.0' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion gstreamer-plugins-base-1.0` -> 1
+
+
+Determining dependency 'gstreamer-plugins-base-1.0' with CMake executable '/usr/bin/cmake'
+Try CMake generator: auto
+Called `/usr/bin/cmake --trace-expand -DNAME=gstreamer-plugins-base-1.0 .` in /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-plugins-base-1.0 -> 0
+Dependency gstreamer-plugins-base-1.0 found: NO (tried pkgconfig and cmake)
+Determining dependency 'gstreamer-app-1.0' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion gstreamer-app-1.0` -> 1
+
+
+Determining dependency 'gstreamer-app-1.0' with CMake executable '/usr/bin/cmake'
+Try CMake generator: auto
+Called `/usr/bin/cmake --trace-expand -DNAME=gstreamer-app-1.0 .` in /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-app-1.0 -> 0
+Dependency gstreamer-app-1.0 found: NO (tried pkgconfig and cmake)
+Determining dependency 'gstreamer-allocators-1.0' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion gstreamer-allocators-1.0` -> 1
+
+
+Determining dependency 'gstreamer-allocators-1.0' with CMake executable '/usr/bin/cmake'
+Try CMake generator: auto
+Called `/usr/bin/cmake --trace-expand -DNAME=gstreamer-allocators-1.0 .` in /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-allocators-1.0 -> 0
+Dependency gstreamer-allocators-1.0 found: NO (tried pkgconfig and cmake)
+Determining dependency 'gstreamer-video-1.0' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion gstreamer-video-1.0` -> 1
+
+
+Determining dependency 'gstreamer-video-1.0' with CMake executable '/usr/bin/cmake'
+Try CMake generator: auto
+Called `/usr/bin/cmake --trace-expand -DNAME=gstreamer-video-1.0 .` in /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-video-1.0 -> 0
+Dependency gstreamer-video-1.0 found: NO (tried pkgconfig and cmake)
+Determining dependency 'glib-2.0' with pkg-config executable '/usr/bin/pkg-config'
+Called `/usr/bin/pkg-config --modversion glib-2.0` -> 1
+
+
+Determining dependency 'glib-2.0' with CMake executable '/usr/bin/cmake'
+Try CMake generator: auto
+Called `/usr/bin/cmake --trace-expand -DNAME=glib-2.0 .` in /home/pi/project/VROS/drm/build/meson-private/cmake_glib-2.0 -> 0
+Dependency glib-2.0 found: NO (tried pkgconfig and cmake)
+Message: Building without gstreamer support
+Build targets in project: 2
+Found ninja-1.8.2 at /usr/bin/ninja

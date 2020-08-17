@@ -28,6 +28,15 @@
 #include "esUtil.h"
 
 
+// Data read from the header of the BMP file
+unsigned char header[54]; // Each BMP file begins by a 54-bytes header
+unsigned int dataPos;     // Position in the file where the actual data begins
+unsigned int width, height;
+unsigned int imageSize;   // = width*height*3
+// Actual RGB data
+unsigned char * data;
+GLuint Texture;
+
 static struct {
 	struct egl egl;
 
@@ -39,6 +48,24 @@ static struct {
 	GLuint positionsoffset, colorsoffset, normalsoffset;
 } gl;
 
+
+	
+static const GLfloat vVertices[] = {
+		// first
+		-1.0f, -1.0f, +1.0f,
+		+1.0f, -1.0f, +1.0f,
+		-1.0f, +1.0f, +1.0f,
+		+1.0f, +1.0f, +1.0f,
+		
+		// second
+		-1.0f + 2.0f, -1.0f, +1.0f,
+		+1.0f + 2.0f, -1.0f, +1.0f,
+		-1.0f + 2.0f, +1.0f, +1.0f,
+		+1.0f + 2.0f, +1.0f, +1.0f,
+};
+
+
+/*
 static const GLfloat vVertices[] = {
 		// front
 		-1.0f, -1.0f, +1.0f,
@@ -71,71 +98,32 @@ static const GLfloat vVertices[] = {
 		-1.0f, -1.0f, +1.0f,
 		+1.0f, -1.0f, +1.0f,
 };
+*/
 
 static const GLfloat vColors[] = {
-		// front
-		0.0f,  0.0f,  1.0f, // blue
-		1.0f,  0.0f,  1.0f, // magenta
-		0.0f,  1.0f,  1.0f, // cyan
-		1.0f,  1.0f,  1.0f, // white
-		// back
-		1.0f,  0.0f,  0.0f, // red
+		// first
 		0.0f,  0.0f,  0.0f, // black
-		1.0f,  1.0f,  0.0f, // yellow
-		0.0f,  1.0f,  0.0f, // green
-		// right
-		1.0f,  0.0f,  1.0f, // magenta
-		1.0f,  0.0f,  0.0f, // red
+		0.0f,  0.0f,  0.0f,
+		0.0f,  0.0f,  0.0f,
+		0.0f,  0.0f,  0.0f,
+		// second
 		1.0f,  1.0f,  1.0f, // white
-		1.0f,  1.0f,  0.0f, // yellow
-		// left
-		0.0f,  0.0f,  0.0f, // black
-		0.0f,  0.0f,  1.0f, // blue
-		0.0f,  1.0f,  0.0f, // green
-		0.0f,  1.0f,  1.0f, // cyan
-		// top
-		0.0f,  1.0f,  1.0f, // cyan
-		1.0f,  1.0f,  1.0f, // white
-		0.0f,  1.0f,  0.0f, // green
-		1.0f,  1.0f,  0.0f, // yellow
-		// bottom
-		0.0f,  0.0f,  0.0f, // black
-		1.0f,  0.0f,  0.0f, // red
-		0.0f,  0.0f,  1.0f, // blue
-		1.0f,  0.0f,  1.0f  // magenta
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
 };
 
 static const GLfloat vNormals[] = {
-		// front
+		// first
 		+0.0f, +0.0f, +1.0f, // forward
 		+0.0f, +0.0f, +1.0f, // forward
 		+0.0f, +0.0f, +1.0f, // forward
 		+0.0f, +0.0f, +1.0f, // forward
-		// back
-		+0.0f, +0.0f, -1.0f, // backward
-		+0.0f, +0.0f, -1.0f, // backward
-		+0.0f, +0.0f, -1.0f, // backward
-		+0.0f, +0.0f, -1.0f, // backward
-		// right
-		+1.0f, +0.0f, +0.0f, // right
-		+1.0f, +0.0f, +0.0f, // right
-		+1.0f, +0.0f, +0.0f, // right
-		+1.0f, +0.0f, +0.0f, // right
-		// left
-		-1.0f, +0.0f, +0.0f, // left
-		-1.0f, +0.0f, +0.0f, // left
-		-1.0f, +0.0f, +0.0f, // left
-		-1.0f, +0.0f, +0.0f, // left
-		// top
-		+0.0f, +1.0f, +0.0f, // up
-		+0.0f, +1.0f, +0.0f, // up
-		+0.0f, +1.0f, +0.0f, // up
-		+0.0f, +1.0f, +0.0f, // up
-		// bottom
-		+0.0f, -1.0f, +0.0f, // down
-		+0.0f, -1.0f, +0.0f, // down
-		+0.0f, -1.0f, +0.0f, // down
-		+0.0f, -1.0f, +0.0f  // down
+		// second
+		+0.0f, +0.0f, +1.0f, // forward
+		+0.0f, +0.0f, +1.0f, // forward
+		+0.0f, +0.0f, +1.0f, // forward
+		+0.0f, +0.0f, +1.0f, // forward
 };
 
 static const char *vertex_shader_source =
@@ -169,25 +157,111 @@ static const char *fragment_shader_source =
 		"                                   \n"
 		"void main()                        \n"
 		"{                                  \n"
-		"    gl_FragColor = vVaryingColor;  \n"
+		"    gl_FragColor = vVaryingColor;   \n"
+//		"    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  \n"
 		"}                                  \n";
 
 
-static void draw_cube_smooth(unsigned i)
+GLfloat* pVertices;
+GLfloat* pColors;
+GLfloat* pNormals;
+unsigned short int memoryAllocationSize;
+
+void SpawnPixelPlane() {
+	
+	
+	GLfloat px_sqare[] = {
+		// x    y      z
+		-1.0f, -1.0f, +1.0f,
+		+1.0f, -1.0f, +1.0f,
+		-1.0f, +1.0f, +1.0f,
+		+1.0f, +1.0f, +1.0f,
+	};
+	
+	GLfloat defaultNormal[] = {
+		// x    y      z
+		+0.0f, +0.0f, +1.0f,
+		+0.0f, +0.0f, +1.0f,
+		+0.0f, +0.0f, +1.0f,
+		+0.0f, +0.0f, +1.0f,
+	};
+	
+	
+	
+	unsigned short int width = 2;
+	unsigned short int height = 1;
+	
+	memoryAllocationSize = sizeof(px_sqare) * width * height;
+	
+	pVertices = (GLfloat*)malloc(sizeof(px_sqare) * width * height);
+	printf("memspace %i\n", sizeof(px_sqare) * width * height);
+	
+	// fill with vertex data
+	unsigned int filler = 0;
+	char XYZloop = 1;
+	for (int y = 0; y < height; y ++) {
+		for (int x = 0; x < width; x ++) {
+			for (unsigned short int px = 0; px < (unsigned short int)sizeof(px_sqare)/sizeof(float); px ++) {
+				printf("%i\n", (int)sizeof(px_sqare)/sizeof(float));
+				printf("pVertice[%i] = px_sqare[%i] = %f\n", filler, px, px_sqare[px]);
+				
+				pNormals[filler] = defaultNormal[px];
+				pVertices[filler] = px_sqare[px];
+				pColors[filler] = 0.0f;
+				
+				if (XYZloop == 1) { // X
+					pVertices[filler] += 2.0f * x;
+					
+					printf("lets add 2.0f * %i\n", x);
+				}
+				if (XYZloop == 2) { // y
+					pVertices[filler] += 2.0f * y;
+				}
+				if (XYZloop == 3) {
+					XYZloop=0;
+				} 
+				XYZloop ++;
+				filler ++;
+			}
+		} 
+	}
+	
+}
+
+
+
+
+static void draw_cube_smooth()
 {
-    i = 0;
     
 	ESMatrix modelview;
 
 	/* clear the color buffer */
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
+	
+	
+	/*bmp load dont work yet
+	// Create one OpenGL texture
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// Give the image to OpenGL
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	*/
+	
 
 	esMatrixLoadIdentity(&modelview);
 	esTranslate(&modelview, 0.0f, 0.0f, -8.0f);
-	esRotate(&modelview, 45.0f + (0.25f * i), 1.0f, 0.0f, 0.0f);
-	esRotate(&modelview, 45.0f - (0.5f * i), 0.0f, 1.0f, 0.0f);
-	esRotate(&modelview, 10.0f + (0.15f * i), 0.0f, 0.0f, 1.0f);
+	//esRotate(&modelview, 45.0f + (0.25f * i), 1.0f, 0.0f, 0.0f);
+	//esRotate(&modelview, 45.0f - (0.5f * i), 0.0f, 1.0f, 0.0f);
+	//esRotate(&modelview, 10.0f + (0.15f * i), 0.0f, 0.0f, 1.0f);
 
 	ESMatrix projection;
 	esMatrixLoadIdentity(&projection);
@@ -218,10 +292,62 @@ static void draw_cube_smooth(unsigned i)
 	glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
 	glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
 	glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+
+
 }
+
+
+/*
+GLuint loadBMP_custom(const char * imagepath) {
+	// Open the file
+	FILE * file = fopen(imagepath,"rb");
+	if (!file){printf("Image could not be opened\n"); return 0;}
+
+	if ( fread(header, 1, 54, file)!=54 ){ // If not 54 bytes read : problem
+		printf("Not a correct BMP file\n");
+		return false;
+	}
+	
+	if ( header[0]!='B' || header[1]!='M' ){
+		printf("Not a correct BMP file\n");
+		return 0;
+	}
+	
+	// Read ints from the byte array
+	dataPos    = *(int*)&(header[0x0A]);
+	imageSize  = *(int*)&(header[0x22]);
+	width      = *(int*)&(header[0x12]);
+	height     = *(int*)&(header[0x16]);
+	
+	// Some BMP files are misformatted, guess missing information
+	if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
+	if (dataPos==0)      dataPos=54; // The BMP header is done that way
+
+	// Create a buffer
+	data = new unsigned char [imageSize];
+
+	// Read the actual data from the file into the buffer
+	fread(data,1,imageSize,file);
+
+	//Everything is in memory now, the file can be closed
+	fclose(file);
+}
+
+
+
+void init_bmp() {
+	Texture = loadBMP_custom("./chessboard.bmp");
+}
+*/
 
 const struct egl * init_cube_smooth(const struct gbm *gbm, int samples)
 {
+	//init_bmp();
+	SpawnPixelPlane();
+	for (int i = 0; i < 24; i ++) {
+		printf("hello i:%i a:%f b:%f\n", i, pVertices[i], vVertices[i]);
+	}
+	//exit(0);
 	int ret;
 
 	ret = init_egl(&gl.egl, gbm, samples);
@@ -254,14 +380,14 @@ const struct egl * init_cube_smooth(const struct gbm *gbm, int samples)
 	glEnable(GL_CULL_FACE);
 
 	gl.positionsoffset = 0;
-	gl.colorsoffset = sizeof(vVertices);
-	gl.normalsoffset = sizeof(vVertices) + sizeof(vColors);
+	gl.colorsoffset = memoryAllocationSize;
+	gl.normalsoffset = memoryAllocationSize * 2;
 	glGenBuffers(1, &gl.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, gl.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vVertices) + sizeof(vColors) + sizeof(vNormals), 0, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, gl.positionsoffset, sizeof(vVertices), &vVertices[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, gl.colorsoffset, sizeof(vColors), &vColors[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, gl.normalsoffset, sizeof(vNormals), &vNormals[0]);
+	glBufferData(GL_ARRAY_BUFFER, memoryAllocationSize *3, 0, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, gl.positionsoffset, memoryAllocationSize, &pVertices[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, gl.colorsoffset, memoryAllocationSize, &pColors[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, gl.normalsoffset, memoryAllocationSize, &pNormals[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)(intptr_t)gl.positionsoffset);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)(intptr_t)gl.normalsoffset);
