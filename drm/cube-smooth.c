@@ -23,15 +23,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <png.h>
+#include <errno.h>
+#include <string.h>
+#include <stdarg.h>
 
 #include "common.h"
 #include "esUtil.h"
 
 
+static void
+fatal_error (const char * message, ...)
+{
+    va_list args;
+    va_start (args, message);
+    vfprintf (stderr, message, args);
+    va_end (args);
+    exit (EXIT_FAILURE);
+}
+
+
 // Data read from the header of the BMP file
 unsigned char header[54]; // Each BMP file begins by a 54-bytes header
 unsigned int dataPos;     // Position in the file where the actual data begins
-unsigned int width, height;
+unsigned short int width = 128;
+unsigned short int height = 128;
 unsigned int imageSize;   // = width*height*3
 // Actual RGB data
 unsigned char * data;
@@ -50,81 +66,6 @@ static struct {
 
 
 	
-static const GLfloat vVertices[] = {
-		// first
-		-1.0f, -1.0f, +1.0f,
-		+1.0f, -1.0f, +1.0f,
-		-1.0f, +1.0f, +1.0f,
-		+1.0f, +1.0f, +1.0f,
-		
-		// second
-		-1.0f + 2.0f, -1.0f, +1.0f,
-		+1.0f + 2.0f, -1.0f, +1.0f,
-		-1.0f + 2.0f, +1.0f, +1.0f,
-		+1.0f + 2.0f, +1.0f, +1.0f,
-};
-
-
-/*
-static const GLfloat vVertices[] = {
-		// front
-		-1.0f, -1.0f, +1.0f,
-		+1.0f, -1.0f, +1.0f,
-		-1.0f, +1.0f, +1.0f,
-		+1.0f, +1.0f, +1.0f,
-		// back
-		+1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		+1.0f, +1.0f, -1.0f,
-		-1.0f, +1.0f, -1.0f,
-		// right
-		+1.0f, -1.0f, +1.0f,
-		+1.0f, -1.0f, -1.0f,
-		+1.0f, +1.0f, +1.0f,
-		+1.0f, +1.0f, -1.0f,
-		// left
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, +1.0f,
-		-1.0f, +1.0f, -1.0f,
-		-1.0f, +1.0f, +1.0f,
-		// top
-		-1.0f, +1.0f, +1.0f,
-		+1.0f, +1.0f, +1.0f,
-		-1.0f, +1.0f, -1.0f,
-		+1.0f, +1.0f, -1.0f,
-		// bottom
-		-1.0f, -1.0f, -1.0f,
-		+1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, +1.0f,
-		+1.0f, -1.0f, +1.0f,
-};
-*/
-
-static const GLfloat vColors[] = {
-		// first
-		0.0f,  0.0f,  0.0f, // black
-		0.0f,  0.0f,  0.0f,
-		0.0f,  0.0f,  0.0f,
-		0.0f,  0.0f,  0.0f,
-		// second
-		1.0f,  1.0f,  1.0f, // white
-		1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-};
-
-static const GLfloat vNormals[] = {
-		// first
-		+0.0f, +0.0f, +1.0f, // forward
-		+0.0f, +0.0f, +1.0f, // forward
-		+0.0f, +0.0f, +1.0f, // forward
-		+0.0f, +0.0f, +1.0f, // forward
-		// second
-		+0.0f, +0.0f, +1.0f, // forward
-		+0.0f, +0.0f, +1.0f, // forward
-		+0.0f, +0.0f, +1.0f, // forward
-		+0.0f, +0.0f, +1.0f, // forward
-};
 
 static const char *vertex_shader_source =
 		"uniform mat4 modelviewMatrix;      \n"
@@ -161,11 +102,36 @@ static const char *fragment_shader_source =
 //		"    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  \n"
 		"}                                  \n";
 
+	
 
 GLfloat* pVertices;
 GLfloat* pColors;
 GLfloat* pNormals;
 unsigned short int memoryAllocationSize;
+
+void setPixel(int set_x, int set_y, float r, float g, float b) {
+	int cnt = 0;
+	for (int y = 0; y < height; y ++) {
+		for (int x = 0; x < width; x ++) {
+			// each pixel has 4 vertices
+			for (int v = 0; v < 4; v ++) {
+				for (int rgb = 0; rgb < 3; rgb ++) {
+					if (x == set_x && y == set_y) {
+						if (rgb == 0) {
+							pColors[cnt] = r;
+						} else if (rgb == 1) {
+							pColors[cnt] = g;
+						} else if (rgb == 2) {
+							pColors[cnt] = b;
+						}
+					}
+					
+					cnt ++;
+				}
+			}
+		}
+	}
+}
 
 void SpawnPixelPlane() {
 	
@@ -188,12 +154,12 @@ void SpawnPixelPlane() {
 	
 	
 	
-	unsigned short int width = 2;
-	unsigned short int height = 1;
-	
 	memoryAllocationSize = sizeof(px_sqare) * width * height;
 	
-	pVertices = (GLfloat*)malloc(sizeof(px_sqare) * width * height);
+	pVertices = (GLfloat*)malloc(memoryAllocationSize);
+	pColors = (GLfloat*)malloc(memoryAllocationSize);
+	pNormals = (GLfloat*)malloc(memoryAllocationSize);
+	
 	printf("memspace %i\n", sizeof(px_sqare) * width * height);
 	
 	// fill with vertex data
@@ -202,8 +168,8 @@ void SpawnPixelPlane() {
 	for (int y = 0; y < height; y ++) {
 		for (int x = 0; x < width; x ++) {
 			for (unsigned short int px = 0; px < (unsigned short int)sizeof(px_sqare)/sizeof(float); px ++) {
-				printf("%i\n", (int)sizeof(px_sqare)/sizeof(float));
-				printf("pVertice[%i] = px_sqare[%i] = %f\n", filler, px, px_sqare[px]);
+				//printf("%i\n", (int)sizeof(px_sqare)/sizeof(float));
+				//printf("pVertice[%i] = px_sqare[%i] = %f\n", filler, px, px_sqare[px]);
 				
 				pNormals[filler] = defaultNormal[px];
 				pVertices[filler] = px_sqare[px];
@@ -212,7 +178,7 @@ void SpawnPixelPlane() {
 				if (XYZloop == 1) { // X
 					pVertices[filler] += 2.0f * x;
 					
-					printf("lets add 2.0f * %i\n", x);
+					//printf("lets add 2.0f * %i\n", x);
 				}
 				if (XYZloop == 2) { // y
 					pVertices[filler] += 2.0f * y;
@@ -224,8 +190,7 @@ void SpawnPixelPlane() {
 				filler ++;
 			}
 		} 
-	}
-	
+	}	
 }
 
 
@@ -295,6 +260,155 @@ static void draw_cube_smooth()
 
 
 }
+/*
+void loadPNG() {
+	const char * png_file = "chessboard.png";
+    png_structp	png_ptr;
+    png_infop info_ptr;
+    FILE * fp;
+    png_uint_32 width;
+    png_uint_32 height;
+    int bit_depth;
+    int color_type;
+    int interlace_method;
+    int compression_method;
+    int filter_method;
+    int j;
+    png_bytepp rows;
+    fp = fopen (png_file, "rb");
+    if (! fp) {
+		fatal_error ("Cannot open '%s': %s\n", png_file, strerror (errno));
+    }
+    png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (! png_ptr) {
+		fatal_error ("Cannot create PNG read structure");
+    }
+    info_ptr = png_create_info_struct (png_ptr);
+    if (! png_ptr) {
+		fatal_error ("Cannot create PNG info structure");
+    }
+    png_init_io (png_ptr, fp);
+    png_read_png (png_ptr, info_ptr, 0, 0);
+    png_get_IHDR (png_ptr, info_ptr, & width, & height, & bit_depth,
+		  & color_type, & interlace_method, & compression_method,
+		  & filter_method);
+    rows = png_get_rows (png_ptr, info_ptr);
+    printf ("Width is %d, height is %d\n", width, height);
+    int rowbytes;
+    rowbytes = png_get_rowbytes (png_ptr, info_ptr);
+    printf ("Row bytes = %d\n", rowbytes);
+    for (j = 0; j < height; j++) {
+		int i;
+		png_bytep row;
+		row = rows[j];
+		for (i = 0; i < width; i++) {
+			png_bytep px = &(row[i * 4]);
+			// Do something awesome for each pixel here...
+			printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", i, j, px[0], px[1], px[2], px[3]);
+			png_byte pixel;
+			pixel = row[i];
+			if (pixel < 64) {
+				printf ("##");
+			}
+			else if (pixel < 128) {
+				printf ("**");
+			}
+			else if (pixel < 196) {
+				printf ("..");
+			}
+			else {
+				printf ("  ");
+			}
+
+		}
+		printf ("\n");
+	}
+}*/
+
+
+int png_width, png_height;
+png_byte color_type;
+png_byte bit_depth;
+png_bytep *row_pointers = NULL;
+
+void read_png_file(char *filename) {
+  FILE *fp = fopen(filename, "rb");
+
+  png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if(!png) abort();
+
+  png_infop info = png_create_info_struct(png);
+  if(!info) abort();
+
+  if(setjmp(png_jmpbuf(png))) abort();
+
+  png_init_io(png, fp);
+
+  png_read_info(png, info);
+
+  png_width      = png_get_image_width(png, info);
+  png_height     = png_get_image_height(png, info);
+  color_type = png_get_color_type(png, info);
+  bit_depth  = png_get_bit_depth(png, info);
+
+  // Read any color_type into 8bit depth, RGBA format.
+  // See http://www.libpng.org/pub/png/libpng-manual.txt
+
+  if(bit_depth == 16)
+    png_set_strip_16(png);
+
+  if(color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_palette_to_rgb(png);
+
+  // PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
+  if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+    png_set_expand_gray_1_2_4_to_8(png);
+
+  if(png_get_valid(png, info, PNG_INFO_tRNS))
+    png_set_tRNS_to_alpha(png);
+
+  // These color_type don't have an alpha channel then fill it with 0xff.
+  if(color_type == PNG_COLOR_TYPE_RGB ||
+     color_type == PNG_COLOR_TYPE_GRAY ||
+     color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
+
+  if(color_type == PNG_COLOR_TYPE_GRAY ||
+     color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    png_set_gray_to_rgb(png);
+
+  png_read_update_info(png, info);
+
+  if (row_pointers) abort();
+
+  row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * png_height);
+  for(int y = 0; y < png_height; y++) {
+    row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
+  }
+
+  png_read_image(png, row_pointers);
+
+  fclose(fp);
+
+  png_destroy_read_struct(&png, &info, NULL);
+}
+
+float btof(int byte) {
+	return (1.0f / 255) * byte;
+}
+
+
+void process_png_file() {
+  for(int y = 0; y < png_height; y++) {
+    png_bytep row = row_pointers[y];
+    for(int x = 0; x < png_width; x++) {
+      png_bytep px = &(row[x * 4]);
+      // Do something awesome for each pixel here...
+      printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
+      //setPixel(x, y, btof(px[0]), btof(px[1]), btof(px[2]));
+    }
+  }
+}
 
 
 /*
@@ -332,21 +446,19 @@ GLuint loadBMP_custom(const char * imagepath) {
 	//Everything is in memory now, the file can be closed
 	fclose(file);
 }
-
-
-
-void init_bmp() {
-	Texture = loadBMP_custom("./chessboard.bmp");
-}
 */
+
 
 const struct egl * init_cube_smooth(const struct gbm *gbm, int samples)
 {
-	//init_bmp();
 	SpawnPixelPlane();
-	for (int i = 0; i < 24; i ++) {
-		printf("hello i:%i a:%f b:%f\n", i, pVertices[i], vVertices[i]);
-	}
+    read_png_file("build/chessboard.png");
+    process_png_file();
+	exit(0);
+	//init_bmp();
+	//for (int i = 0; i < 24; i ++) {
+	//	printf("hello i:%i a:%f b:%f\n", i, pVertices[i], vVertices[i]);
+	//}
 	//exit(0);
 	int ret;
 

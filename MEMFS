@@ -1,0 +1,4 @@
+sudo mkdir /var/memorifs
+sudo echo "/var/memorifs memorifs nodev,nosuid,size=10M 0 0">>/etc/fstab 
+sudo mount -a
+df
