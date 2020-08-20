@@ -1,4 +1,4 @@
-Build started at 2020-08-15T20:30:02.889156
+Build started at 2020-08-19T16:52:37.899977
 Main binary: /usr/bin/python3
 Python system: Linux
 The Meson build system
@@ -22,8 +22,8 @@ Native C compiler: cc (gcc 8.3.0 "cc (Raspbian 8.3.0-6+rpi1) 8.3.0")
 Build machine cpu family: arm
 Build machine cpu: armv7l
 Running compile:
-Working directory:  /tmp/tmplek7gnbz
-Command line:  cc /tmp/tmplek7gnbz/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmplek7gnbz/output.exe -O0 -Wl,--start-group -lm -Wl,--end-group -Wl,--allow-shlib-undefined 
+Working directory:  /tmp/tmpa7bz77t8
+Command line:  cc /tmp/tmpa7bz77t8/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpa7bz77t8/output.exe -O0 -Wl,--start-group -lm -Wl,--end-group -Wl,--allow-shlib-undefined 
 
 Code:
  int main(int argc, char **argv) { return 0; }
@@ -44,8 +44,8 @@ Called `/usr/bin/pkg-config libdrm --libs` -> 0
 Called `/usr/bin/pkg-config libdrm --libs` -> 0
 -ldrm
 Running compile:
-Working directory:  /tmp/tmpmcdxoad2
-Command line:  cc /tmp/tmpmcdxoad2/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpmcdxoad2/output.exe -O0 
+Working directory:  /tmp/tmplvtfj2q_
+Command line:  cc /tmp/tmplvtfj2q_/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmplvtfj2q_/output.exe -O0 
 
 Code:
  #include<stdio.h>
@@ -66,8 +66,8 @@ Program stderr:
 
 
 Running compile:
-Working directory:  /tmp/tmpqrhzhiwy
-Command line:  cc /tmp/tmpqrhzhiwy/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -c -o /tmp/tmpqrhzhiwy/output.obj -O0 --print-search-dirs 
+Working directory:  /tmp/tmpf6kvhikr
+Command line:  cc /tmp/tmpf6kvhikr/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -c -o /tmp/tmpf6kvhikr/output.obj -O0 --print-search-dirs 
 
 Code:
  

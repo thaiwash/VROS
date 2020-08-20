@@ -46,8 +46,8 @@ fatal_error (const char * message, ...)
 // Data read from the header of the BMP file
 unsigned char header[54]; // Each BMP file begins by a 54-bytes header
 unsigned int dataPos;     // Position in the file where the actual data begins
-unsigned short int width = 128;
-unsigned short int height = 128;
+int width = 128;
+int height = 128;
 unsigned int imageSize;   // = width*height*3
 // Actual RGB data
 unsigned char * data;
@@ -107,7 +107,7 @@ static const char *fragment_shader_source =
 GLfloat* pVertices;
 GLfloat* pColors;
 GLfloat* pNormals;
-unsigned short int memoryAllocationSize;
+int memoryAllocationSize;
 
 void setPixel(int set_x, int set_y, float r, float g, float b) {
 	int cnt = 0;
@@ -163,31 +163,35 @@ void SpawnPixelPlane() {
 	printf("memspace %i\n", sizeof(px_sqare) * width * height);
 	
 	// fill with vertex data
-	unsigned int filler = 0;
+	int filler = 0;
 	char XYZloop = 1;
 	for (int y = 0; y < height; y ++) {
 		for (int x = 0; x < width; x ++) {
-			for (unsigned short int px = 0; px < (unsigned short int)sizeof(px_sqare)/sizeof(float); px ++) {
+			for (int px = 0; px < 12; px ++) {
 				//printf("%i\n", (int)sizeof(px_sqare)/sizeof(float));
-				//printf("pVertice[%i] = px_sqare[%i] = %f\n", filler, px, px_sqare[px]);
+				//printf("pVertices[%i] = px_sqare[%i] = %f\n", filler, px, px_sqare[px]);
 				
 				pNormals[filler] = defaultNormal[px];
 				pVertices[filler] = px_sqare[px];
 				pColors[filler] = 0.0f;
 				
 				if (XYZloop == 1) { // X
-					pVertices[filler] += 2.0f * x;
+					//pVertices[filler] += 2.0f * x;
 					
 					//printf("lets add 2.0f * %i\n", x);
 				}
 				if (XYZloop == 2) { // y
-					pVertices[filler] += 2.0f * y;
+					//pVertices[filler] += 2.0f * y;
 				}
 				if (XYZloop == 3) {
 					XYZloop=0;
 				} 
 				XYZloop ++;
 				filler ++;
+				/*if (filler > width * height * 12) {
+					printf("end");
+					break;
+				}*/
 			}
 		} 
 	}	
@@ -404,7 +408,7 @@ void process_png_file() {
     for(int x = 0; x < png_width; x++) {
       png_bytep px = &(row[x * 4]);
       // Do something awesome for each pixel here...
-      printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
+      //printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
       //setPixel(x, y, btof(px[0]), btof(px[1]), btof(px[2]));
     }
   }
@@ -452,9 +456,9 @@ GLuint loadBMP_custom(const char * imagepath) {
 const struct egl * init_cube_smooth(const struct gbm *gbm, int samples)
 {
 	SpawnPixelPlane();
-    read_png_file("build/chessboard.png");
+    read_png_file("chessboard.png");
     process_png_file();
-	exit(0);
+	//exit(0);
 	//init_bmp();
 	//for (int i = 0; i < 24; i ++) {
 	//	printf("hello i:%i a:%f b:%f\n", i, pVertices[i], vVertices[i]);
