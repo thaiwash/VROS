@@ -1,0 +1,153 @@
+<!-- science>
+
+Gyro values are from -255 to 255
+Threejs rotation is 0 to 2 * Math.PI
+someTexture.wrapS = THREE.RepeatWrapping;
+someTexture.wrapT = THREE.RepeatWrapping;
+</science -->
+
+
+<html>
+  <head>
+  <title>GyroVisualization</title>
+<style> body { margin: 0; } canvas { display: block; }
+</style> 
+</head> 
+<body> 
+<script src="js/lib/three.min.js"></script> 
+<script src="js/lib/jquery-3.5.1.min.js"></script> 
+<script src="js/lib/cannon.min.js"></script>
+<script>
+var scene = new THREE.Scene(); 
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ); 
+var renderer = new THREE.WebGLRenderer(); 
+renderer.setSize( window.innerWidth, window.innerHeight ); 
+document.body.appendChild( renderer.domElement ); 
+var cube;
+
+function cube() {
+	var geometry = new THREE.BoxGeometry()
+	var loader = new THREE.CubeTextureLoader();
+	loader.setPath( 'img/cube/' );
+
+	var textureCube = loader.load( [
+		'px.png', 'nx.png',
+		'py.png', 'ny.png',
+		'pz.png', 'nz.png'
+	] );
+
+
+	for ( var i = 0; i < geometry.faces.length; i ++ ) {
+		geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
+	}
+
+	var material = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: true } );
+
+
+	/*var material = new THREE.MeshBasicMaterial( 
+		{ color: 0xffffff, envMap: textureCube }
+	)*/
+	
+	cube = new THREE.Mesh( geometry, material )
+	scene.add( cube ); 
+	camera.position.z = 5; 
+}
+
+function gyroToThreejsRotation(value)  {
+	value += 255
+	var divider = 1/512
+	return (divider * (Math.PI * 2)) * value
+}
+
+// Setup our world
+var world = new CANNON.World();
+world.gravity.set(0, 0, -9.82); // m/s²
+
+// Create a sphere
+var radius = 1; // m
+var sphereBody = new CANNON.Body({
+   mass: 5, // kg
+   position: new CANNON.Vec3(0, 0, 10), // m
+   shape: new CANNON.Sphere(radius)
+});
+world.addBody(sphereBody);
+
+// Create a plane
+var groundBody = new CANNON.Body({
+    mass: 0 // mass == 0 makes the body static
+});
+var groundShape = new CANNON.Plane();
+groundBody.addShape(groundShape);
+world.addBody(groundBody);
+
+var fixedTimeStep = 1.0 / 60.0; // seconds
+var maxSubSteps = 3;
+
+// Start the simulation loop
+var lastTime;
+(function simloop(time){
+  requestAnimationFrame(simloop);
+  if(lastTime !== undefined){
+     var dt = (time - lastTime) / 1000;
+     world.step(fixedTimeStep, dt, maxSubSteps);
+  }
+  console.log("Sphere z position: " + sphereBody.position.z);
+  lastTime = time;
+})();
+
+var animate = function () {
+	
+	
+    requestAnimationFrame( animate ); 
+    if (typeof sensorState.gyro === "undefined") {
+		return;
+	}
+    if (typeof sensorState.gyro.x === "undefined") {
+		return;
+	}
+	//console.log(sensorState.gyro.x)
+	/*if (sensorState.gyro.x > Max) {
+		Max = sensorState.gyro.x
+	}
+	if (sensorState.gyro.x < Min) {
+		Min = sensorState.gyro.x
+	}*/
+    cube.rotation.x = gyroToThreejsRotation(sensorState.gyro.x)
+    cube.rotation.y = gyroToThreejsRotation(sensorState.gyro.y)
+    cube.rotation.z = gyroToThreejsRotation(sensorState.gyro.z)
+   
+    renderer.render( scene, camera );
+};
+
+sensorState = {}
+var recurseCount = 0;
+
+var Min = 0;
+var Max = 0;
+
+function recurse() {	
+	$.ajax({
+	  url: "/sensor",
+	}).done(function( data ) {
+		if ( console && console.log ) {
+		  recurseCount ++
+		  sensorState = data
+		  setTimeout(function() {
+			  recurse()
+		  }, 100)
+		}
+	  });
+}
+$(document).ready(function(){
+	cube()
+	animate()
+	recurse()
+	setInterval(function() {
+		recuseCount = 0
+	}, 1000)
+})
+
+
+</script> 
+</body>
+</html>

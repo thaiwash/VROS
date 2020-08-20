@@ -1,0 +1,19 @@
+{
+  "name": "nodempucast",
+  "version": "0.0.1",
+  "description": "A 6DOF tracking visualizer made with javasript",
+  "main": "server.js",
+  "dependencies": {
+    "avros": "0.0.4",
+    "express": "^4.17.1",
+    "i2c-bus": "^5.2.0",
+    "i2c-mpu6050": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Taivas Gogoljuk <taivas.gogoljuk@gmail.com>",
+  "license": "ISC"
+}

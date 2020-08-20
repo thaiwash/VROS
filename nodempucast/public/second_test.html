@@ -1,0 +1,68 @@
+<!-- science>
+
+Gyro values are from -255 to 255
+Threejs rotation is 0 to 2 * Math.PI
+someTexture.wrapS = THREE.RepeatWrapping;
+someTexture.wrapT = THREE.RepeatWrapping;
+</science -->
+
+
+<html>
+  <head>
+  <title>GyroVisualization</title>
+<style> body { margin: 0; } canvas { display: block; }
+</style> 
+</head> 
+<body> 
+<script src="js/lib/three.min.js"></script> 
+<script src="js/lib/jquery-3.5.1.min.js"></script> 
+<script src="js/lib/cannon.min.js"></script>
+<script src="js/cube.js"></script> 
+<script src="js/conversion.js"></script> 
+<script src="js/sensor_state.js"></script>
+<script src="js/physics.js"></script>
+<script>
+var scene = new THREE.Scene(); 
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ); 
+var renderer = new THREE.WebGLRenderer(); 
+renderer.setSize( window.innerWidth, window.innerHeight ); 
+document.body.appendChild( renderer.domElement ); 
+
+
+
+var animate = function () {
+    requestAnimationFrame( animate ); 
+    if (typeof sensorState.gyro === "undefined") {
+		return;
+	}
+    if (typeof sensorState.gyro.x === "undefined") {
+		return;
+	}
+	//console.log(sensorState.gyro.x)
+	/*if (sensorState.gyro.x > Max) {
+		Max = sensorState.gyro.x
+	}
+	if (sensorState.gyro.x < Min) {
+		Min = sensorState.gyro.x
+	}*/
+    cube.rotation.x = gyroToThreejsRotation(sensorState.rotation.x) *2
+    cube.rotation.y = gyroToThreejsRotation(sensorState.rotation.y) *2
+    //cube.rotation.z = gyroToThreejsRotation(sensorState.gyro.z)
+   
+    renderer.render( scene, camera );
+};
+
+$(document).ready(function(){
+	cube()
+	animate()
+	recurse()
+	setInterval(function() {
+		recuseCount = 0
+	}, 1000)
+})
+
+
+</script> 
+this is thesting the rotation attribute
+</body>
+</html>

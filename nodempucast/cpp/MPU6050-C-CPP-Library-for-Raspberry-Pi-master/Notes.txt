@@ -1,0 +1,3 @@
+// required dependency
+sudo apt-get install libi2c-dev
+sudo make

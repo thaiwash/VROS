@@ -1,0 +1,7 @@
+https://imagemagick.org/Usage/distorts/#barrel
+sudo apt-get install imagemagick
+
+convert checks.png -virtual-pixel gray -distort Barrel "0.2 0.0 0.0 1.0"   barrel_checks_A.png
+
+making a ram drive 
+https://www.domoticz.com/wiki/Setting_up_a_RAM_drive_on_Raspberry_Pi
