@@ -138,10 +138,10 @@ void SpawnPixelPlane() {
 	
 	GLfloat px_sqare[] = {
 		// x    y      z
-		-1.0f, -1.0f, +1.0f,
-		+1.0f, -1.0f, +1.0f,
-		-1.0f, +1.0f, +1.0f,
-		+1.0f, +1.0f, +1.0f,
+		-1.0f, -1.0f, 0.0f,
+		+1.0f, -1.0f, 0.0f,
+		-1.0f, +1.0f, 0.0f,
+		+1.0f, +1.0f, 0.0f,
 	};
 	
 	GLfloat defaultNormal[] = {
@@ -165,6 +165,10 @@ void SpawnPixelPlane() {
 	// fill with vertex data
 	int filler = 0;
 	char XYZloop = 1;
+	GLfloat scale = 0.01f;
+	GLfloat x_offset = -300.0f;
+	GLfloat y_offset = 200.0f;
+	
 	for (int y = 0; y < height; y ++) {
 		for (int x = 0; x < width; x ++) {
 			for (int px = 0; px < 12; px ++) {
@@ -174,24 +178,33 @@ void SpawnPixelPlane() {
 				pNormals[filler] = defaultNormal[px];
 				pVertices[filler] = px_sqare[px];
 				pColors[filler] = 0.0f;
+				if (filler < 12) {
+					pColors[filler] = 1.0f;
+				}
 				
 				if (XYZloop == 1) { // X
-					//pVertices[filler] += 2.0f * x;
+					pVertices[filler] += x_offset;
+					pVertices[filler] += 2.0f * x;
+					
+					pVertices[filler] *= scale;
 					
 					//printf("lets add 2.0f * %i\n", x);
 				}
 				if (XYZloop == 2) { // y
-					//pVertices[filler] += 2.0f * y;
+					pVertices[filler] += y_offset;
+					pVertices[filler] -= 2.0f * y;
+					
+					pVertices[filler] *= scale;
 				}
 				if (XYZloop == 3) {
 					XYZloop=0;
 				} 
 				XYZloop ++;
 				filler ++;
-				/*if (filler > width * height * 12) {
-					printf("end");
+				if (filler > width * height * 12) {
+					printf("memory overflow error fix");
 					break;
-				}*/
+				}
 			}
 		} 
 	}	
@@ -255,12 +268,9 @@ static void draw_cube_smooth()
 	glUniformMatrix4fv(gl.modelviewprojectionmatrix, 1, GL_FALSE, &modelviewprojection.m[0][0]);
 	glUniformMatrix3fv(gl.normalmatrix, 1, GL_FALSE, normal);
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
-	glDrawArrays(GL_TRIANGLE_STRIP, 8, 4);
-	glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
-	glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
-	glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+	for (int i = 0; i < width*height; i++) {
+		glDrawArrays(GL_TRIANGLE_STRIP, i*4, 4);
+	}
 
 
 }
@@ -397,7 +407,7 @@ void read_png_file(char *filename) {
   png_destroy_read_struct(&png, &info, NULL);
 }
 
-float btof(int byte) {
+float btof(double byte) {
 	return (1.0f / 255) * byte;
 }
 
@@ -409,7 +419,7 @@ void process_png_file() {
       png_bytep px = &(row[x * 4]);
       // Do something awesome for each pixel here...
       //printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
-      //setPixel(x, y, btof(px[0]), btof(px[1]), btof(px[2]));
+      setPixel(x, y, btof(px[0]), btof(px[1]), btof(px[2]));
     }
   }
 }
@@ -456,8 +466,10 @@ GLuint loadBMP_custom(const char * imagepath) {
 const struct egl * init_cube_smooth(const struct gbm *gbm, int samples)
 {
 	SpawnPixelPlane();
-    read_png_file("chessboard.png");
-    process_png_file();
+    	read_png_file("chessboard.png");
+	//printf("Setting pixel 0,0 to white");
+     	//setPixel(1, 1, 1.0f, 1.0f, 1.0f);
+    	process_png_file();
 	//exit(0);
 	//init_bmp();
 	//for (int i = 0; i < 24; i ++) {

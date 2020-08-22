@@ -59,10 +59,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-1.0
+CMAKE_SOURCE_DIR = /home/pi/project/VROS/VROS/drm/build/meson-private/cmake_gstreamer-1.0
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pi/project/VROS/drm/build/meson-private/cmake_gstreamer-1.0
+CMAKE_BINARY_DIR = /home/pi/project/VROS/VROS/drm/build/meson-private/cmake_gstreamer-1.0
 
 #=============================================================================
 # Special targets to cleanup operation of make.
