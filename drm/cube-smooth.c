@@ -32,16 +32,6 @@
 #include "esUtil.h"
 
 
-static void
-fatal_error (const char * message, ...)
-{
-    va_list args;
-    va_start (args, message);
-    vfprintf (stderr, message, args);
-    va_end (args);
-    exit (EXIT_FAILURE);
-}
-
 
 // Data read from the header of the BMP file
 unsigned char header[54]; // Each BMP file begins by a 54-bytes header
@@ -65,8 +55,6 @@ static struct {
 } gl;
 
 
-	
-
 static const char *vertex_shader_source =
 		"uniform mat4 modelviewMatrix;      \n"
 		"uniform mat4 modelviewprojectionMatrix;\n"
@@ -77,6 +65,19 @@ static const char *vertex_shader_source =
 		"attribute vec4 in_color;           \n"
 		"\n"
 		"vec4 lightSource = vec4(2.0, 2.0, 20.0, 0.0);\n"
+		
+				
+
+		"vec2 brownConradyDistortion(in vec2 uv, in float k1, in float k2)\n"
+		"{ \n"
+		"    uv = uv * 2.0 - 1.0;\n"
+		"    // positive values of K1 give barrel distortion, negative give pincushion\n"
+		"    float r2 = uv.x*uv.x + uv.y*uv.y;\n"
+		"    uv *= 1.0 + k1 * r2 + k2 * r2 * r2;\n"
+		"    uv = (uv * .5 + .5);	\n" 
+		"    return uv; \n"
+		"} \n"
+		
 		"                                   \n"
 		"varying vec4 vVaryingColor;        \n"
 		"                                   \n"
@@ -212,68 +213,6 @@ void SpawnPixelPlane() {
 
 
 
-
-static void draw_cube_smooth()
-{
-    
-	ESMatrix modelview;
-
-	/* clear the color buffer */
-	glClearColor(0.5, 0.5, 0.5, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	
-	/*bmp load dont work yet
-	// Create one OpenGL texture
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, textureID);
-
-	// Give the image to OpenGL
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	*/
-	
-
-	esMatrixLoadIdentity(&modelview);
-	esTranslate(&modelview, 0.0f, 0.0f, -8.0f);
-	//esRotate(&modelview, 45.0f + (0.25f * i), 1.0f, 0.0f, 0.0f);
-	//esRotate(&modelview, 45.0f - (0.5f * i), 0.0f, 1.0f, 0.0f);
-	//esRotate(&modelview, 10.0f + (0.15f * i), 0.0f, 0.0f, 1.0f);
-
-	ESMatrix projection;
-	esMatrixLoadIdentity(&projection);
-	esFrustum(&projection, -2.8f, +2.8f, -2.8f * gl.aspect, +2.8f * gl.aspect, 6.0f, 10.0f);
-
-	ESMatrix modelviewprojection;
-	esMatrixLoadIdentity(&modelviewprojection);
-	esMatrixMultiply(&modelviewprojection, &modelview, &projection);
-
-	float normal[9];
-	normal[0] = modelview.m[0][0];
-	normal[1] = modelview.m[0][1];
-	normal[2] = modelview.m[0][2];
-	normal[3] = modelview.m[1][0];
-	normal[4] = modelview.m[1][1];
-	normal[5] = modelview.m[1][2];
-	normal[6] = modelview.m[2][0];
-	normal[7] = modelview.m[2][1];
-	normal[8] = modelview.m[2][2];
-
-	glUniformMatrix4fv(gl.modelviewmatrix, 1, GL_FALSE, &modelview.m[0][0]);
-	glUniformMatrix4fv(gl.modelviewprojectionmatrix, 1, GL_FALSE, &modelviewprojection.m[0][0]);
-	glUniformMatrix3fv(gl.normalmatrix, 1, GL_FALSE, normal);
-
-	for (int i = 0; i < width*height; i++) {
-		glDrawArrays(GL_TRIANGLE_STRIP, i*4, 4);
-	}
-
-
-}
 /*
 void loadPNG() {
 	const char * png_file = "chessboard.png";
@@ -413,13 +352,24 @@ float btof(double byte) {
 
 
 void process_png_file() {
+  int count = 0;
   for(int y = 0; y < png_height; y++) {
     png_bytep row = row_pointers[y];
     for(int x = 0; x < png_width; x++) {
       png_bytep px = &(row[x * 4]);
+      
+	for(int whole_pixel = 0; whole_pixel < 4; whole_pixel++) {
+	      pColors[count] = (1.0f / 255) * px[0];
+	      count ++;
+	      pColors[count] = (1.0f / 255) * px[1];
+	      count ++;
+	      pColors[count] = (1.0f / 255) * px[2];
+	      count ++;
+	}
+       
       // Do something awesome for each pixel here...
       //printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
-      setPixel(x, y, btof(px[0]), btof(px[1]), btof(px[2]));
+      //setPixel(x, y, btof(px[0]), btof(px[1]), btof(px[2]));
     }
   }
 }
@@ -462,14 +412,155 @@ GLuint loadBMP_custom(const char * imagepath) {
 }
 */
 
+// width and height
+static GLubyte checkImage[128][128][4];
 
+// https://stackoverflow.com/questions/12969971/is-it-possible-to-manually-create-image-data-for-opengl-texture-use
+void makeCheckImage()
+{
+   int i, j, c;
+
+   for (i = 0; i < height; i++) {
+      for (j = 0; j < width; j++) {
+         c = ((((i&0x8)==0)^((j&0x8))==0))*255;
+	 
+         checkImage[i][j][0] = (GLubyte) c;
+         checkImage[i][j][1] = (GLubyte) c;
+         checkImage[i][j][2] = (GLubyte) c;
+         checkImage[i][j][3] = (GLubyte) 255;
+      }
+   }
+}
+
+// https://open.gl/textures
+// https://open.gl/content/code/c3_exercise_1.txt
+/*
+GLuint texture[1];
+void createTexture() {
+    // generate texture
+    glGenTextures(1, texture);
+    
+    // Activate texture as in this is what were using now
+    glActiveTexture(GL_TEXTURE0);
+    // Bind the generated texture to the active texture
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    // https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTexImage2D.xml
+    makeCheckImage();
+     
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, checkImage);
+    
+    
+    // Create and compile the vertex shader
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexSource, NULL);
+    glCompileShader(vertexShader);
+
+    // Create and compile the fragment shader
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+    glCompileShader(fragmentShader);
+
+    // Link the vertex and fragment shader into a shader program
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glBindFragDataLocation(shaderProgram, 0, "outColor");
+    glLinkProgram(shaderProgram);
+    glUseProgram(shaderProgram);
+    
+    
+    // this function needs research
+    glUniform1i(glGetUniformLocation(shaderProgram, "texKitten"), 0);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    
+    
+
+}
+
+*/
+
+
+static void draw_cube_smooth()
+{
+    	//read_png_file("/var/memdrive/frame.png");
+    	//process_png_file();
+    	//read_png_file("/var/memdrive/frame.png");
+    	//process_png_file();
+    
+	ESMatrix modelview;
+
+	/* clear the color buffer */
+	glClearColor(0.5, 0.5, 0.5, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	
+	/*bmp load dont work yet
+	// Create one OpenGL texture
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// Give the image to OpenGL
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	*/
+	
+
+	esMatrixLoadIdentity(&modelview);
+	esTranslate(&modelview, 0.0f, 0.0f, -8.0f);
+	//esRotate(&modelview, 45.0f + (0.25f * i), 1.0f, 0.0f, 0.0f);
+	//esRotate(&modelview, 45.0f - (0.5f * i), 0.0f, 1.0f, 0.0f);
+	//esRotate(&modelview, 10.0f + (0.15f * i), 0.0f, 0.0f, 1.0f);
+
+	ESMatrix projection;
+	esMatrixLoadIdentity(&projection);
+	esFrustum(&projection, -2.8f, +2.8f, -2.8f * gl.aspect, +2.8f * gl.aspect, 6.0f, 10.0f);
+
+	ESMatrix modelviewprojection;
+	esMatrixLoadIdentity(&modelviewprojection);
+	esMatrixMultiply(&modelviewprojection, &modelview, &projection);
+
+	float normal[9];
+	normal[0] = modelview.m[0][0];
+	normal[1] = modelview.m[0][1];
+	normal[2] = modelview.m[0][2];
+	normal[3] = modelview.m[1][0];
+	normal[4] = modelview.m[1][1];
+	normal[5] = modelview.m[1][2];
+	normal[6] = modelview.m[2][0];
+	normal[7] = modelview.m[2][1];
+	normal[8] = modelview.m[2][2];
+
+	glUniformMatrix4fv(gl.modelviewmatrix, 1, GL_FALSE, &modelview.m[0][0]);
+	glUniformMatrix4fv(gl.modelviewprojectionmatrix, 1, GL_FALSE, &modelviewprojection.m[0][0]);
+	glUniformMatrix3fv(gl.normalmatrix, 1, GL_FALSE, normal);
+
+	for (int i = 0; i < width*height; i++) {
+		glDrawArrays(GL_TRIANGLE_STRIP, i*4, 4);
+	}
+
+
+}
 const struct egl * init_cube_smooth(const struct gbm *gbm, int samples)
 {
 	SpawnPixelPlane();
-    	read_png_file("chessboard.png");
+    	//read_png_file("/var/memdrive/frame.png");
+	read_png_file("chessboard.png");
+    	process_png_file();
 	//printf("Setting pixel 0,0 to white");
      	//setPixel(1, 1, 1.0f, 1.0f, 1.0f);
-    	process_png_file();
+	
+	//createTexture();
 	//exit(0);
 	//init_bmp();
 	//for (int i = 0; i < 24; i ++) {

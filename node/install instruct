@@ -1,0 +1,18 @@
+- No package 'cairo' found
+- No package 'pangocairo' found
+
+
+npm install canvas
+npm install image-data-uri
+
+sudo apt install libcairo2-dev
+sudo apt-get install -y libsdl-pango-dev
+sudo apt-get install -y libjpeg-dev
+sudo apt-get install libgif-dev
+
+
+//sudo apt-get install libpango1.0-dev
+
+Maybe
+sudo apt install libgirepository1.0-dev
+

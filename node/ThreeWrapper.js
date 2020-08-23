@@ -1,4 +1,7 @@
 var fs = require("fs")
+const { createCanvas, loadImage } = require('canvas')
+const canvas = createCanvas(128, 128)
+const ctx = canvas.getContext('2d')
 
 var self = {};
 
@@ -17,13 +20,10 @@ var document = {
         if (name == "canvas") {
             //return new Canvas(canvasWidth, canvasHeight);
         }
-        var Canvas = require('canvas')
-        return new Canvas(500,500)
+        return canvas;
     },
     createElementNS: function(name) {
-
-        var Canvas = require('canvas')
-        return new Canvas(500,500)
+        return canvas;
     }
 };
 
@@ -39,7 +39,6 @@ class ThreeClient extends EventEmitter {
     constructor() {
         super()
         var self = this
-        this.appId = 667
 
 
         self.loaded = false
@@ -49,8 +48,8 @@ class ThreeClient extends EventEmitter {
         this.tildeColor = '#0000ff'
         this.selectColor = '#ffffff'
 
-        this.width = 500
-        this.height = 500
+        this.width = 128
+        this.height = 128
 
 
 
@@ -58,7 +57,7 @@ class ThreeClient extends EventEmitter {
         this.renderer.setSize(this.width, this.height);
 
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 0.001, 3000);
-        this.camera.position.z = 2;
+        this.camera.position.z = 5;
 
 
 
@@ -74,25 +73,55 @@ class ThreeClient extends EventEmitter {
 
 
         this.updated = false
-        /*
-        var geometry = new THREE.SphereGeometry( 0.1, 32, 32 );
-        var material = new THREE.MeshBasicMaterial( {color: 0xFF0000} );
-        this.sphere = new THREE.Mesh( geometry, material );
-        this.scene.add( this.sphere );
-        */
+        //var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+        //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        
+        var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+        
+        for ( var i = 0; i < geometry.faces.length; i ++ ) {
+            geometry.faces[ i ].color.setHex( 0xFF00FF );
+        }
+    
+        var material = new THREE.MeshBasicMaterial( { color: 0xFF0000, vertexColors: true } );
+        this.cube = new THREE.Mesh( geometry, material );
+        this.scene.add( this.cube );
+
+        
     }
 
 
 
 
     getTexture() {
+        this.cube.rotation.x += 0.1;
+        this.cube.rotation.y += 0.1;
+    
         this.renderer.render(this.scene, this.camera);
-        var data = this.renderer.domElement.toDataURL().substr("data:image/png;base64,".length)
-        var buf = new Buffer(data, 'base64');
-        fs.writeFile('image.png', buf);
+        'use strict';
+
+        const ImageDataURI = require('image-data-uri');
+
+        const dataURI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAIAAAFlEcHbAAAAB3RJTUUH1gMWFjk7nUWcXQAAAAlwSFlzAABOIAAATiABFn2Z3gAAAARnQU1BAACxjwv8YQUAAAAeSURBVHjaY7h79y7DhAkTGIA04/Tp0xkYGJ49ewYAgYwLV/R7bDQAAAAASUVORK5CYII=';
+        const fileName = '/var/memdrive/frame.png';
+
+        ImageDataURI.outputFile(this.renderer.domElement.toDataURL(), fileName);
+
+        //console.log(this.renderer.domElement.toDataURL())
+        //var data = this.renderer.domElement.toDataURL().substr("data:image/png;base64,".length)
+        //const buffer = canvas.toBuffer('image/png')
+        //fs.writeFileSync('./image.png', buffer)
+        
+        //console.log(data)
+        //var buf = new Buffer(data, 'base64');
+        //fs.writeFile('image.png', buf);
         //return this.renderer.domElement.toDataURL().substr("data:image/png;base64,".length);
         
     }
 }
 
 var THREEClient = new ThreeClient();
+
+setInterval(function() {
+    THREEClient.getTexture();
+    console.log("updated");
+}, 1000)
