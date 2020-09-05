@@ -1,0 +1,269 @@
+Build started at 2020-08-22T14:47:42.213424
+Main binary: /usr/bin/python3
+Build Options: 
+Python system: Linux
+The Meson build system
+Version: 0.55.0
+Source dir: /home/pi/project/VROS/VROS/drm
+Build dir: /home/pi/project/VROS/VROS/drm/build
+Build type: native build
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+Project name: kmscube
+Project version: 0.0.1
+None of 'CC' are defined in the environment, not changing global flags.
+None of 'CFLAGS' are defined in the environment, not changing global flags.
+None of 'LDFLAGS' are defined in the environment, not changing global flags.
+None of 'CPPFLAGS' are defined in the environment, not changing global flags.
+None of 'CC_LD' are defined in the environment, not changing global flags.
+Sanity testing C compiler: cc
+Is cross compiler: False.
+None of 'CC_LD' are defined in the environment, not changing global flags.
+Sanity check compiler command line: cc /home/pi/project/VROS/VROS/drm/build/meson-private/sanitycheckc.c -o /home/pi/project/VROS/VROS/drm/build/meson-private/sanitycheckc.exe -pipe -D_FILE_OFFSET_BITS=64
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/pi/project/VROS/VROS/drm/build/meson-private/sanitycheckc.exe
+C compiler for the build machine: cc (gcc 8.3.0 "cc (Raspbian 8.3.0-6+rpi1) 8.3.0")
+C linker for the build machine: cc ld.bfd 2.31.1
+None of 'AR' are defined in the environment, not changing global flags.
+None of 'CC' are defined in the environment, not changing global flags.
+None of 'CFLAGS' are defined in the environment, not changing global flags.
+None of 'LDFLAGS' are defined in the environment, not changing global flags.
+None of 'CPPFLAGS' are defined in the environment, not changing global flags.
+None of 'CC_LD' are defined in the environment, not changing global flags.
+Sanity testing C compiler: cc
+Is cross compiler: False.
+None of 'CC_LD' are defined in the environment, not changing global flags.
+Sanity check compiler command line: cc /home/pi/project/VROS/VROS/drm/build/meson-private/sanitycheckc.c -o /home/pi/project/VROS/VROS/drm/build/meson-private/sanitycheckc.exe -pipe -D_FILE_OFFSET_BITS=64
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/pi/project/VROS/VROS/drm/build/meson-private/sanitycheckc.exe
+C compiler for the host machine: cc (gcc 8.3.0 "cc (Raspbian 8.3.0-6+rpi1) 8.3.0")
+C linker for the host machine: cc ld.bfd 2.31.1
+None of 'AR' are defined in the environment, not changing global flags.
+Build machine cpu family: arm
+Build machine cpu: armv7l
+Host machine cpu family: arm
+Host machine cpu: armv7l
+Target machine cpu family: arm
+Target machine cpu: armv7l
+None of 'CC_LD' are defined in the environment, not changing global flags.
+Running compile:
+Working directory:  /home/pi/project/VROS/VROS/drm/build/meson-private/tmpunxf6bwc
+Command line:  cc /home/pi/project/VROS/VROS/drm/build/meson-private/tmpunxf6bwc/testfile.c -o /home/pi/project/VROS/VROS/drm/build/meson-private/tmpunxf6bwc/output.exe -pipe -D_FILE_OFFSET_BITS=64 -O0 -Wl,--start-group -lm -Wl,--end-group -Wl,--allow-shlib-undefined 
+
+Code:
+ int main(void) { return 0; }
+
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Library m found: YES
+Run-time dependency threads found: YES
+Pkg-config binary for MachineChoice.HOST is not cached.
+None of 'PKG_CONFIG' are defined in the environment, not changing global flags.
+Pkg-config binary missing from cross or native file, or env var undefined.
+Trying a default Pkg-config fallback at pkg-config
+Found pkg-config: /usr/bin/pkg-config (0.29)
+Determining dependency 'libdrm' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion libdrm` -> 0
+2.4.100
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --cflags libdrm` -> 0
+-I/usr/include/libdrm
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config libdrm --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -ldrm
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config libdrm --libs` -> 0
+-ldrm
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+None of 'CC_LD' are defined in the environment, not changing global flags.
+Running compile:
+Working directory:  /home/pi/project/VROS/VROS/drm/build/meson-private/tmpvlsuvg6k
+Command line:  cc /home/pi/project/VROS/VROS/drm/build/meson-private/tmpvlsuvg6k/testfile.c -o /home/pi/project/VROS/VROS/drm/build/meson-private/tmpvlsuvg6k/output.exe -pipe -D_FILE_OFFSET_BITS=64 -O0 
+
+Code:
+ #include<stdio.h>
+        
+        int main(void) {
+            printf("%ld\n", (long)(sizeof(void *)));
+            return 0;
+        };
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Program stdout:
+
+4
+
+Program stderr:
+
+
+Running compile:
+Working directory:  /home/pi/project/VROS/VROS/drm/build/meson-private/tmp8gilcj2j
+Command line:  cc /home/pi/project/VROS/VROS/drm/build/meson-private/tmp8gilcj2j/testfile.c -o /home/pi/project/VROS/VROS/drm/build/meson-private/tmp8gilcj2j/output.obj -pipe -c -D_FILE_OFFSET_BITS=64 -O0 --print-search-dirs 
+
+Code:
+ 
+Compiler stdout:
+ install: /usr/lib/gcc/arm-linux-gnueabihf/8/
+programs: =/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/bin/
+libraries: =/usr/lib/gcc/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/lib/arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/lib/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../../arm-linux-gnueabihf/lib/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../arm-linux-gnueabihf/8/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/8/../../../:/lib/arm-linux-gnueabihf/8/:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/8/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/
+
+Compiler stderr:
+ 
+Run-time dependency libdrm found: YES 2.4.100
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'gbm' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion gbm` -> 0
+19.3.2
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --cflags gbm` -> 0
+
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config gbm --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lgbm
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config gbm --libs` -> 0
+-lgbm
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+Run-time dependency gbm found: YES 19.3.2
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'egl' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion egl` -> 0
+1.5
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --cflags egl` -> 0
+
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config egl --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lEGL
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config egl --libs` -> 0
+-lEGL
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+Run-time dependency egl found: YES 1.5
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'glesv2' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion glesv2` -> 0
+3.2
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --cflags glesv2` -> 0
+
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config glesv2 --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lGLESv2
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config glesv2 --libs` -> 0
+-lGLESv2
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+Run-time dependency glesv2 found: YES 3.2
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'libpng' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion libpng` -> 0
+1.6.36
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --cflags libpng` -> 0
+-I/usr/include/libpng16
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config libpng --libs` -> 0
+-L/usr/lib/arm-linux-gnueabihf -lpng16 -lz
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config libpng --libs` -> 0
+-lpng16 -lz
+None of 'PKG_CONFIG_PATH' are defined in the environment, not changing global flags.
+Run-time dependency libpng found: YES 1.6.36
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'gstreamer-1.0' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion gstreamer-1.0` -> 1
+
+CMake binary for MachineChoice.HOST is not cached
+None of 'CMAKE' are defined in the environment, not changing global flags.
+CMake binary missing from cross or native file, or env var undefined.
+Trying a default CMake fallback at cmake
+Found CMake: /usr/bin/cmake (3.13.4)
+None of 'CMAKE_PREFIX_PATH' are defined in the environment, not changing global flags.
+Extracting basic cmake information
+Try CMake generator: auto
+None of 'CXX' are defined in the environment, not changing global flags.
+None of 'CXXFLAGS' are defined in the environment, not changing global flags.
+None of 'LDFLAGS' are defined in the environment, not changing global flags.
+None of 'CPPFLAGS' are defined in the environment, not changing global flags.
+None of 'CXX_LD' are defined in the environment, not changing global flags.
+None of 'FC' are defined in the environment, not changing global flags.
+Failed to find a fortran compiler for CMake. This might cause CMake to fail.
+Called `/usr/bin/cmake --trace --trace-expand --no-warn-unused-cli .` in /home/pi/project/VROS/VROS/drm/build/meson-private/cmake_gstreamer-1.0 -> 0
+  -- Module search paths:    ['/', '/opt', '/usr', '/usr/local']
+  -- CMake root:             /usr/share/cmake-3.13
+  -- CMake architectures:    ['arm-linux-gnueabihf']
+  -- CMake lib search paths: ['lib', 'lib32', 'lib64', 'libx32', 'share', 'lib/arm-linux-gnueabihf']
+Preliminary CMake check failed. Aborting.
+Run-time dependency gstreamer-1.0 found: NO (tried pkgconfig and cmake)
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'gstreamer-plugins-base-1.0' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion gstreamer-plugins-base-1.0` -> 1
+
+CMake binary for MachineChoice.HOST is cached.
+None of 'CMAKE_PREFIX_PATH' are defined in the environment, not changing global flags.
+Preliminary CMake check failed. Aborting.
+Run-time dependency gstreamer-plugins-base-1.0 found: NO (tried pkgconfig and cmake)
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'gstreamer-app-1.0' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion gstreamer-app-1.0` -> 1
+
+CMake binary for MachineChoice.HOST is cached.
+None of 'CMAKE_PREFIX_PATH' are defined in the environment, not changing global flags.
+Preliminary CMake check failed. Aborting.
+Run-time dependency gstreamer-app-1.0 found: NO (tried pkgconfig and cmake)
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'gstreamer-allocators-1.0' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion gstreamer-allocators-1.0` -> 1
+
+CMake binary for MachineChoice.HOST is cached.
+None of 'CMAKE_PREFIX_PATH' are defined in the environment, not changing global flags.
+Preliminary CMake check failed. Aborting.
+Run-time dependency gstreamer-allocators-1.0 found: NO (tried pkgconfig and cmake)
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'gstreamer-video-1.0' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion gstreamer-video-1.0` -> 1
+
+CMake binary for MachineChoice.HOST is cached.
+None of 'CMAKE_PREFIX_PATH' are defined in the environment, not changing global flags.
+Preliminary CMake check failed. Aborting.
+Run-time dependency gstreamer-video-1.0 found: NO (tried pkgconfig and cmake)
+Pkg-config binary for MachineChoice.HOST is cached.
+Determining dependency 'glib-2.0' with pkg-config executable '/usr/bin/pkg-config'
+PKG_CONFIG_PATH: 
+Called `/usr/bin/pkg-config --modversion glib-2.0` -> 1
+
+CMake binary for MachineChoice.HOST is cached.
+None of 'CMAKE_PREFIX_PATH' are defined in the environment, not changing global flags.
+Preliminary CMake check failed. Aborting.
+Run-time dependency glib-2.0 found: NO (tried pkgconfig and cmake)
+Message: Building without gstreamer support
+Build targets in project: 2
+
+Found ninja-1.8.2 at /usr/bin/ninja
+None of 'STRIP' are defined in the environment, not changing global flags.
+None of 'STRIP' are defined in the environment, not changing global flags.

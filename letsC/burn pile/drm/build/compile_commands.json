@@ -1,0 +1,87 @@
+[
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/common.c.o -MF kmscube.p/common.c.o.d -o kmscube.p/common.c.o -c ../common.c",
+    "file": "../common.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/cube-shadertoy.c.o -MF kmscube.p/cube-shadertoy.c.o.d -o kmscube.p/cube-shadertoy.c.o -c ../cube-shadertoy.c",
+    "file": "../cube-shadertoy.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/cube-smooth.c.o -MF kmscube.p/cube-smooth.c.o.d -o kmscube.p/cube-smooth.c.o -c ../cube-smooth.c",
+    "file": "../cube-smooth.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/cube-tex.c.o -MF kmscube.p/cube-tex.c.o.d -o kmscube.p/cube-tex.c.o -c ../cube-tex.c",
+    "file": "../cube-tex.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/drm-atomic.c.o -MF kmscube.p/drm-atomic.c.o.d -o kmscube.p/drm-atomic.c.o -c ../drm-atomic.c",
+    "file": "../drm-atomic.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/drm-common.c.o -MF kmscube.p/drm-common.c.o.d -o kmscube.p/drm-common.c.o -c ../drm-common.c",
+    "file": "../drm-common.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/drm-legacy.c.o -MF kmscube.p/drm-legacy.c.o.d -o kmscube.p/drm-legacy.c.o -c ../drm-legacy.c",
+    "file": "../drm-legacy.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/esTransform.c.o -MF kmscube.p/esTransform.c.o.d -o kmscube.p/esTransform.c.o -c ../esTransform.c",
+    "file": "../esTransform.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/frame-512x512-NV12.c.o -MF kmscube.p/frame-512x512-NV12.c.o.d -o kmscube.p/frame-512x512-NV12.c.o -c ../frame-512x512-NV12.c",
+    "file": "../frame-512x512-NV12.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/frame-512x512-RGBA.c.o -MF kmscube.p/frame-512x512-RGBA.c.o.d -o kmscube.p/frame-512x512-RGBA.c.o -c ../frame-512x512-RGBA.c",
+    "file": "../frame-512x512-RGBA.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/kmscube.c.o -MF kmscube.p/kmscube.c.o.d -o kmscube.p/kmscube.c.o -c ../kmscube.c",
+    "file": "../kmscube.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Ikmscube.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ kmscube.p/perfcntrs.c.o -MF kmscube.p/perfcntrs.c.o.d -o kmscube.p/perfcntrs.c.o -c ../perfcntrs.c",
+    "file": "../perfcntrs.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Itexturator.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ texturator.p/common.c.o -MF texturator.p/common.c.o.d -o texturator.p/common.c.o -c ../common.c",
+    "file": "../common.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Itexturator.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ texturator.p/drm-legacy.c.o -MF texturator.p/drm-legacy.c.o.d -o texturator.p/drm-legacy.c.o -c ../drm-legacy.c",
+    "file": "../drm-legacy.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Itexturator.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ texturator.p/drm-common.c.o -MF texturator.p/drm-common.c.o.d -o texturator.p/drm-common.c.o -c ../drm-common.c",
+    "file": "../drm-common.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Itexturator.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ texturator.p/perfcntrs.c.o -MF texturator.p/perfcntrs.c.o.d -o texturator.p/perfcntrs.c.o -c ../perfcntrs.c",
+    "file": "../perfcntrs.c"
+  },
+  {
+    "directory": "/home/pi/project/VROS/VROS/drm/build",
+    "command": "cc -Itexturator.p -I. -I.. -I/usr/include/libdrm -I/usr/include/libpng16 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -std=gnu99 -g -DHAVE_LIBPNG -pthread -MD -MQ texturator.p/texturator.c.o -MF texturator.p/texturator.c.o.d -o texturator.p/texturator.c.o -c ../texturator.c",
+    "file": "../texturator.c"
+  }
+]
