@@ -1,0 +1,5 @@
+- make nodejs modules
+
+- drawing screen pixels
+- gyro visualizer
+- threejs implement

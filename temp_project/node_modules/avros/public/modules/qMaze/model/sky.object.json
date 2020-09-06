@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "version": 4.4,
+    "type": "Object",
+    "generator": "Object3D.toJSON"
+  },
+  "geometries": [
+    {
+      "uuid": "A4AA25DE-8241-475F-8181-0E1A79710919",
+      "type": "BoxGeometry",
+      "width": 2048,
+      "height": 2048,
+      "depth": 2048
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "423A4954-3E51-4C98-996D-C5785EF9629D",
+      "type": "ShaderMaterial",
+      "side": 1,
+      "uniforms": {
+        "tCube": {
+          "value": {
+            "uuid": "F5502F7F-8C59-4F9A-A354-2944C79D19DD",
+            "name": "",
+            "sourceFile": "",
+            "image": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ],
+            "mipmaps": [],
+            "mapping": 301,
+            "wrapS": 1001,
+            "wrapT": 1001,
+            "magFilter": 1006,
+            "minFilter": 1008,
+            "anisotropy": 1,
+            "format": 1020,
+            "type": 1009,
+            "offset": {
+              "x": 0,
+              "y": 0
+            },
+            "repeat": {
+              "x": 1,
+              "y": 1
+            },
+            "generateMipmaps": true,
+            "premultiplyAlpha": false,
+            "flipY": false,
+            "unpackAlignment": 4,
+            "encoding": 3000,
+            "version": 1,
+            "onUpdate": null,
+            "_listeners": {
+              "dispose": [
+                null
+              ]
+            }
+          }
+        },
+        "tFlip": {
+          "value": -1
+        },
+        "opacity": {
+          "value": 1
+        }
+      },
+      "vertexShader": "varying vec3 vWorldPosition;\n#include <common>\nvoid main() {\n\tvWorldPosition = transformDirection( position, modelMatrix );\n\t#include <begin_vertex>\n\t#include <project_vertex>\n}\n",
+      "fragmentShader": "uniform samplerCube tCube;\nuniform float tFlip;\nuniform float opacity;\nvarying vec3 vWorldPosition;\n#include <common>\nvoid main() {\n\tgl_FragColor = textureCube( tCube, vec3( tFlip * vWorldPosition.x, vWorldPosition.yz ) );\n\tgl_FragColor.a *= opacity;\n}\n"
+    }
+  ],
+  "object": {
+    "uuid": "890C71F1-BE22-45E0-9CF2-9B7D20C6C895",
+    "type": "Mesh",
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "geometry": "A4AA25DE-8241-475F-8181-0E1A79710919",
+    "material": "423A4954-3E51-4C98-996D-C5785EF9629D"
+  }
+}

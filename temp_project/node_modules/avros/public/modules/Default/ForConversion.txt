@@ -1,0 +1,24 @@
+
+    function loadCrate(cratetexture) {
+           		//// remove existing 
+             var sillObject = scene.getObjectByName('krat');
+	         scene.remove(sillObject);
+            
+           var filename='images/krat.stl';  
+           var loader = new THREE.STLLoader();
+		   loader.load( filename, function ( geometry ) {
+//		var material = new THREE.MeshPhongMaterial( { color: cratecolor, specular: 0x111111, shininess: 100 } );
+				texture = new THREE.TextureLoader().load( cratetexture );
+                material = new THREE.MeshPhongMaterial( { map: texture} );
+				var mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set(0,0,0);
+                mesh.scale.set(0.002, 0.002, 0.002);
+				mesh.castShadow = true;
+				mesh.receiveShadow = true;
+                mesh.name = "krat";
+                mesh.add (addLogo(100,200,0,'logo1'));
+                mesh.add (addLogo(100,200,298,'logo2'));
+				scene.add( mesh );
+                setColor(cratetexture);  
+		} );
+    }

@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "version": 4.4,
+    "type": "Object",
+    "generator": "Object3D.toJSON"
+  },
+  "geometries": [
+    {
+      "uuid": "CEC4626B-FDA4-453A-99C5-07802F1D0B3C",
+      "type": "BoxGeometry",
+      "width": 18.961538461537003,
+      "height": 30,
+      "depth": 32.46153846153589
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "2CF155DD-EFF7-4E31-B433-DA1B05FA07A1",
+      "type": "MeshBasicMaterial",
+      "color": 65280,
+      "opacity": 0,
+      "transparent": true
+    }
+  ],
+  "object": {
+    "uuid": "6AF006C7-625D-4D8B-B11A-F69678220DE2",
+    "type": "Mesh",
+    "name": "RayCasterBlockers",
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      15,
+      0,
+      1
+    ],
+    "geometry": "CEC4626B-FDA4-453A-99C5-07802F1D0B3C",
+    "material": "2CF155DD-EFF7-4E31-B433-DA1B05FA07A1"
+  }
+}

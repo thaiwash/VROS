@@ -1,0 +1,1 @@
+cmd_Release/array_buffer_to_native.node := ln -f "Release/obj.target/array_buffer_to_native.node" "Release/array_buffer_to_native.node" 2>/dev/null || (rm -rf "Release/array_buffer_to_native.node" && cp -af "Release/obj.target/array_buffer_to_native.node" "Release/array_buffer_to_native.node")

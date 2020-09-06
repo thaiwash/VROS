@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Zen programming</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<!-- Origin Trial Token, feature = WebVR (For Chrome M62+), origin = https://threejs.org, expires = 2018-04-03 -->
+		<meta http-equiv="origin-trial" data-feature="WebVR (For Chrome M62+)" data-expires="2018-04-03" content="AqIrNtaoJSmDZatgEEW2ehuK9ITIiFk3gZ3/gC6Vp0gF85NDYl7IzVPj4Bh7O6SIcr3ICOm6kocYSaS+BPkazgYAAABQeyJvcmlnaW4iOiJodHRwczovL3RocmVlanMub3JnOjQ0MyIsImZlYXR1cmUiOiJXZWJWUjEuMU02MiIsImV4cGlyeSI6MTUyMjc2MzAwMn0=">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #101010;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			a {
+				color: #f00;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="js/lib/three.js"></script>
+		<script src="js/lib/WebVR.js"></script>
+		<script src="js/lib/SceneUtils.js"></script>
+		<script src="js/lib/socket.io.js"></script>
+		<script src="js/lib/d3.min.js"></script>
+		<script src="js/lib/OrbitControls.js"></script>
+		
+        <script src="js/processOptimization.js"></script>
+        <script src="js/controller.js"></script>
+        <script src="js/headText.js"></script>
+        <script src="js/sphere.js"></script>
+        <!-- script src="js/fileSystem.js"></script -->
+        <script src="js/canvasObject.js"></script>
+        <script src="js/scaler.js"></script>
+        <script src="js/autoSave.js"></script>
+        <script src="js/desktop.js"></script>
+        <script src="js/keyboard.js"></script>
+        <script src="js/textEditor.js"></script>
+		<script src="js/stereoCamera.js"></script>
+		<script src="js/util.js"></script>
+
+		<script src="modules/OSModule.js"></script>
+		<script src="modules/CarShow/index.js"></script>
+		<script src="modules/ModelLoader/ModelLoader.js"></script>
+		<script src="modules/TextLoader/TextLoader.js"></script>
+		<script src="modules/Animate/index.js"></script>
+		<script src="modules/InspectBox/index.js"></script>
+		<script src="modules/Compiler/index.js"></script>
+		<script src="modules/FileSystem/FileSystem.js"></script>
+		<script src="modules/qMaze/Builder.js"></script>
+		<script src="modules/Raycast/Raycast.js"></script>
+		<script src="modules/FIMK/FIMK.js"></script>
+		<script src="modules/Polygon/Polygon.js"></script>
+		<script src="modules/O/O.js"></script>
+		<script src="modules/Sockets/Sockets.js"></script>
+
+		<script>
+
+// todo: tests
+class ShereOS {
+    constructor() {
+        var self = this
+        this.modules = {}
+        this.paused = false;
+
+		this.container = document.createElement( 'div' );
+		document.body.appendChild( this.container );
+
+		this.scene = new THREE.Scene();
+		this.scene.background = new THREE.Color( 0x0040ff );
+
+		this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		this.camera.position.set( 0, 0, 0 );//
+		this.scene.add( this.camera );
+		this.controls = new THREE.OrbitControls( this.camera );
+		this.controls.target.set( 0, 0, 0 );
+		this.controls.object = this.camera;
+		this.controls.update();
+
+		this.scene.add( new THREE.HemisphereLight( 0x606060, 0x404040 ) );
+		this.light = new THREE.AmbientLight( 0x404040 );
+		//this.light = new THREE.DirectionalLight( 0xffffff );
+		//this.light.position.set( 1, 1, 1 ).normalize();
+		this.scene.add( this.light );
+
+		this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+		this.renderer.setPixelRatio( window.devicePixelRatio );
+		this.renderer.setSize( window.innerWidth, window.innerHeight );
+		this.renderer.vr.enabled = true;
+		this.container.appendChild( this.renderer.domElement );
+
+				
+
+        this.loadFont()
+		
+		
+		var cube = new THREE.Mesh( new THREE.CubeGeometry( 200, 200, 200 ), new THREE.MeshNormalMaterial() );
+		cube.position.y = 0
+		// add the object to the scene
+		this.scene.add( cube );
+		this.enableVR()
+    }
+	
+	enableVR() {
+		var self = this
+		document.body.appendChild( WEBVR.createButton( this.renderer , function(display) {
+           self.display = display
+        } ) );
+	}
+	
+	defaultLocation() {
+		console.assert(typeof headText !== "undefined", "default spawning location requires headText module") 
+		return headText.spawningLocation()
+	}
+	
+	defaultQuaternion() {
+		console.assert(typeof headText !== "undefined", "default spawning location requires headText module") 
+		return headText.spawningQuaternion()
+	}
+	
+	defaultObject() {
+		console.assert(typeof headText !== "undefined", "default spawning location requires headText module") 
+		return headText.fpsText
+	}
+
+    controllerWrapper() {
+        var self = this
+        window.addEventListener('buttonpressed', function (e) {
+            if (controller.buttonPressed["R_JOYSTICK"]
+                && controller.buttonPressed["L_JOYSTICK"]) {
+                self.display.exitPresent()
+            }
+        })
+    }
+
+    loadFont() {
+
+        var self = this
+        this.loaded = false
+        var loader = new THREE.FontLoader();
+        loader.load(
+            'font/font_helvetiker_regular.typeface.json', function ( font ) {
+        	self.loaded = true
+        	self.font = font
+
+            self.initModules()
+            self.animate()
+            self.controllerWrapper()
+        })
+    }
+
+    initModules() {
+		this.modules["po"] = new PerformanceOptimization()
+		this.modules["headText"] = new HeadText()
+		this.modules["controller"] = new Controller()
+        //this.modules["scaler"] = new Scaler()
+        //this.modules["save"] = new autoSave()
+        //this.modules["spheres"] = new Sphere()
+        //this.modules["fs"] = new FileSystem()
+		//this.modules["carShow"] = new CarShow()
+        //this.modules["container"] = new Container()
+        //this.modules["desktop"] = new Desktop()
+        //this.modules["textEditor"] = new TextEditor()
+        //this.modules["keyboard"] = new Keyboard()
+        //this.modules["zed"] = new Zed()
+		//this.modules["modelLoader"] = new ModelLoader()
+		//this.modules["textLoader"] = new TextLoader()
+		//this.modules["animate"] = new Animate()
+		//this.modules["inspectBox"] = new InspectBox()
+		//this.modules["compiler"] = new Compiler()
+		//this.modules["lazer"] = new Raycast()
+		//this.modules["builder"] = new Builder()
+		//this.modules["fimk"] = new FIMK()
+		//this.modules["polygon"] = new Polygon()
+		this.modules["o"] = new O()
+		this.modules["sockets"] = new Sockets()
+
+        // global context for backwards compatibility
+        for (var i = 0; i < Object.keys(this.modules).length; i ++) {
+            var key = Object.keys(this.modules)[i]
+            window[key] = this.modules[key]
+			
+        }
+		
+        for (var i = 0; i < Object.keys(this.modules).length; i ++) {
+            var module = this.modules[Object.keys(this.modules)[i]]
+            if (typeof module.requires !== "undefined") {
+				for (var i2 = 0; i2 < module.requires.length; i2 ++) {
+					if (typeof this.modules[module.requires[i2]] === "undefined") {
+						console.warn(Object.keys(this.modules)[i] + " requires "+ module.requires[i2])
+					}
+				}
+			}
+			this.modules[key]
+            if (typeof module.init === "function") {
+                module.init()
+            }
+        }
+    }
+
+    animate() {
+        var self = this
+        // maybe use intervals
+        requestAnimationFrame( function () {
+            self.animate()
+        })
+        this.renderer.render( this.scene, this.camera )
+    	this.update()
+        po.frameUpdate()
+    }
+
+    update() {
+        if (!document.hasFocus()) {
+            //console.log("No focus on window")
+            //return
+        }
+		
+		this.controls.update();
+
+        for (var i = 0; i < Object.keys(this.modules).length; i ++) {
+            var module = this.modules[Object.keys(this.modules)[i]]
+            if (typeof module.update === "function") {
+                module.update()
+            }
+        }
+    }
+}
+
+var OS = new ShereOS()
+
+function isVoid(variable) {
+	if (typeof variable === "undefined") {
+        return true
+	}
+    return false
+}
+/*
+class Container {
+    constructor() {
+        var self = this
+        this.mathSphere = new THREE.Sphere()
+        this.childPosition = new THREE.Vector3()
+        this.childScale = new THREE.Vector3()
+        window.addEventListener('scaling', function (e) {
+            self.scaleCheck(e.detail.sphere)
+        })
+    }
+
+    scaleCheck(object) {
+        this.mathSphere.center.copy(object.position)
+        //console.log()
+        //console.log(this.mathSphere.distanceToPoint(OS.camera.position))
+        if ((object.geometry.boundingSphere.radius * object.scale.x) >
+            this.mathSphere.distanceToPoint(OS.camera.position)) {
+            this.enterWorld(object)
+        }
+
+        var isWithinControllerSphere = true
+        for (var i = 0; i < object.children.length; i ++) {
+
+            if (object.children[i].geometry.type == "Geometry") {
+                //console.log(i + "sphere")
+                this.childPosition = new THREE.Vector3()
+                this.childScale = new THREE.Vector3()
+                object.children[i].getWorldPosition(this.childPosition)
+                object.children[i].getWorldScale(this.childScale)
+                this.mathSphere.center.copy(this.childPosition)
+                //console.log(this.childPosition)
+                //console.log(this.childScale.x)
+                var childRadius = (
+                    object.children[i].geometry.boundingSphere.radius *
+                    this.childScale.x
+                )
+                //console.log(childRadius)
+                //console.log(object.children[i].geometry.boundingSphere.radius)
+                var distanceToControllerCenter = this.mathSphere.distanceToPoint(
+                    controller.controllerSphere[0].position
+                )
+                //console.log(distanceToControllerCenter)
+                //console.log(controller.controllerSphere[0].geometry.boundingSphere.radius)
+            //object.children[i].material.color.setHex( 0x000000 )
+                //console.log(childRadius+" + "+distanceToControllerCenter + "<"+ controller.controllerSphere[0].geometry.boundingSphere.radius)
+                if (childRadius + distanceToControllerCenter < controller.controllerSphere[0].geometry.boundingSphere.radius) {
+                    //console.log("true")
+                    object.children[i].material.color.setHex( 0x000000 )
+                } else {
+                    isWithinControllerSphere = false
+                }
+            }
+        }
+        // known bug, grabbed shprere has no within check
+        //console.log(isWithinControllerSphere)
+
+        if (isWithinControllerSphere && (spheres.fileName(object).substr(0, 6) != "Sphere")) {
+            this.exitWorld(object)
+        }
+/*
+        for (object)
+        if (object) {
+            console.log(false);
+        }
+    }
+
+    enterWorld(object) {
+        console.log("enterworld")
+        spheres.jsonToSphere(object.innerWorld)
+        //OS.scene.remove(object)
+        //pack.outerWorld = spheres.sphereToJson(object)
+        spheres.removeStack(object)
+    }
+
+    exitWorld(object) {
+        console.log("exitworld")
+
+        var pack = spheres.add(
+            controller.controllerSphere[0].position.toArray(),
+            spheres.fileName(object)
+        )
+        pack.innerWorld = spheres.sphereToJson(object)
+        //console.log(pack)
+
+        spheres.removeStack(object)
+    }
+}*/
+		</script>
+	</body>
+</html>

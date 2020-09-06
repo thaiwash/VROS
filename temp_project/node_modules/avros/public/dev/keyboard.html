@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+    <title>Easel Test</title>
+    <head>
+    <script>
+
+        class Keyboard {
+            constructor() {
+                var self = this
+                this.chars = []
+                this.mouseDown = false
+                var canvas = document.getElementById("canvas")
+                canvas.onmousedown = function(evt){
+                    self.mousedown(evt.clientX, evt.clientY)
+                }
+                canvas.onmousemove = function(evt){
+                    self.mousemove(evt.clientX, evt.clientY)
+                }
+                canvas.onmouseup = function(evt){
+                }
+
+
+                document.addEventListener('keydown', function(event) {
+                    self.keypress(event.key)
+                })
+
+                this.ctx = canvas.getContext('2d')
+                this.scale = 0.5
+
+                this.keys = [
+                    ["Esc",
+                        [this.applyScale(4), this.applyScale(2)],
+                        [this.applyScale(49), this.applyScale(49)],
+                        false,
+                        false
+                    ],
+                    ["F1",
+                        [this.applyScale(131), this.applyScale(2)],
+                        [this.applyScale(49), this.applyScale(49)],
+                        false,
+                        false
+                    ],
+                    ["1",
+                        [this.applyScale(63), this.applyScale(71)],
+                        [this.applyScale(49), this.applyScale(49)],
+                        false,
+                        false
+                    ]
+                ]
+
+                this.textHeight = 8
+                this.ctx.font = this.textHeight+"pt Arial"
+
+                this.keyboardImage = new Image()
+                this.keyboardImage.src = '/img/keyboard.png';
+                this.keyboardImage.onload = function() {
+                    self.drawKeyboard()
+                }
+
+            }
+
+            applyScale(num){
+                return Math.round(num*this.scale)
+            }
+
+            drawKeyboard() {
+                this.ctx.fillStyle = '#eeeeee'
+                this.ctx.fillRect(
+                    0,
+                    0,
+                    this.applyScale(this.keyboardImage.width),
+                    this.applyScale(this.keyboardImage.height)
+                )
+
+                this.ctx.fillStyle = '#aaaaaa'
+                for (var i = 0; i < this.keys.length; i ++) {
+                    if (this.keys[i][3]) {
+                        this.ctx.fillRect(
+                            this.keys[i][1][0],
+                            this.keys[i][1][1],
+                            this.keys[i][2][0],
+                            this.keys[i][2][1]
+                        )
+                    }
+                }
+
+
+                this.ctx.fillStyle = '#555555'
+                for (var i = 0; i < this.keys.length; i ++) {
+                    if (this.keys[i][4]) {
+                        this.ctx.fillRect(
+                            this.keys[i][1][0],
+                            this.keys[i][1][1],
+                            this.keys[i][2][0],
+                            this.keys[i][2][1]
+                        )
+                    }
+                }
+
+
+                this.ctx.fillStyle = '#000000'
+                for (var i = 0; i < this.keys.length; i ++) {
+                    this.ctx.fillText(
+                        this.keys[i][0],
+                        Math.round(
+                            this.keys[i][1][0] + (this.keys[i][2][0]/2)
+                            - Math.round((
+                                this.ctx.measureText(this.keys[i][0]).width /2
+                            ))
+                        ),
+                        Math.round(
+                            this.keys[i][1][1] + (this.keys[i][2][1]/2)
+                        ) + this.applyScale(6)
+                    )
+                }
+                // remember onload - (this.keys[i][2][1]/2)
+                this.ctx.drawImage(
+                    this.keyboardImage,
+                    0,
+                    0,
+                    Math.round(this.keyboardImage.width*this.scale),
+                    Math.round(this.keyboardImage.height*this.scale)
+                )
+            }
+
+            // todo, optimize performance, so that you dont redraw every second
+            mousemove(x, y) {
+                for (var i = 0; i < this.keys.length; i ++) {
+                    if (this.within(
+                        [x, y],
+                        this.keys[i][1],
+                        this.keys[i][2]
+                    )) {
+                        this.keys[i][3] = true
+                        this.drawKeyboard()
+                    }
+                }
+            }
+
+            // todo, optimize performance, so that you dont redraw every second
+            mousedown(x, y) {
+                for (var i = 0; i < this.keys.length; i ++) {
+                    if (this.within(
+                        [x, y],
+                        this.keys[i][1],
+                        this.keys[i][2]
+                    )) {
+                        this.keys[i][4] = true
+                        this.drawKeyboard()
+                    }
+                }
+            }
+
+            within(crd, pos, size) {
+            	if (crd[0] >= pos[0] && crd[0] <= pos[0]+size[0])
+            		if (crd[1] >= pos[1] && crd[1] <= pos[1]+size[1])
+            			return true
+            	return false
+            }
+        }
+
+        function init() {
+            var woot = new Keyboard()
+        }
+
+
+
+    </script>
+
+    </head>
+    <body onload="init();">
+        <canvas id="canvas" width="800" height="600" style="position: absolute; top:0px; left:0px"></canvas>
+    </body>
+
+</html>

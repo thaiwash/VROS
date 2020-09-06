@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>FBX Inspect - Teardown</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+			}
+			#info a {
+				color: #046;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<script src="js/three.min.js"></script>
+
+		<script src="js/inflate.min.js"></script>
+		<script src="js/FBXLoader.js"></script>
+		<script src="js/TGALoader.js"></script>
+
+		<script src="js/OrbitControls.js"></script>
+
+
+		<script>
+
+
+			var container, controls;
+			var camera, scene, renderer, light;
+			var mouseDown = false;
+
+
+			var clock = new THREE.Clock();
+
+			var mixers = [];
+
+			init();
+			initInspectBox();
+			animate();
+			var manualControl = false;
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.set( 100, 200, 300 );
+
+				controls = new THREE.OrbitControls( camera );
+				controls.target.set( 0, 100, 0 );
+				controls.update();
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xa0a0a0 );
+				scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+
+				light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+				light.position.set( 0, 200, 0 );
+				scene.add( light );
+
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, 200, 100 );
+				light.castShadow = true;
+				light.shadow.camera.top = 180;
+				light.shadow.camera.bottom = - 100;
+				light.shadow.camera.left = - 120;
+				light.shadow.camera.right = 120;
+				scene.add( light );
+
+				// scene.add( new THREE.CameraHelper( light.shadow.camera ) );
+
+				// ground
+				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				mesh.rotation.x = - Math.PI / 2;
+				mesh.receiveShadow = true;
+				scene.add( mesh );
+
+				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
+				grid.material.opacity = 0.2;
+				grid.material.transparent = true;
+				scene.add( grid );
+
+				// model
+				var loader = new THREE.FBXLoader();
+				loader.load( 'inspectedfbx.fbx', function ( object ) {
+					object.name = "inspectedObject";
+					object.mixer = new THREE.AnimationMixer( object );
+					mixers.push( object.mixer );
+
+					var action = object.mixer.clipAction( object.animations[ 0 ] );
+					action.play();
+
+					object.traverse( function ( child ) {
+
+						if ( child.isMesh ) {
+
+							child.castShadow = true;
+							child.receiveShadow = true;
+
+						}
+
+					} );
+					console.log(object)
+					scene.add( object );
+					inspect(false);
+					setTimeout(function() {
+						if (!manualControl) {
+							map();
+						}
+					}, 5000);
+				} );
+
+
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				container.appendChild( renderer.domElement );
+				window.addEventListener( 'resize', onWindowResize, false );
+
+
+
+				document.addEventListener( 'mousedown', function(evt){
+					mouseDown = true;
+				}, false );
+				document.addEventListener( 'mouseup', function(evt){
+					mouseDown = false;
+				}, false );
+				document.addEventListener( 'mousemove', function(evt){
+					if (mouseDown) {
+						return;
+					}
+					var rect = document.getElementById("inspectbox").getBoundingClientRect();
+
+					if (within({x: evt.clientX, y: evt.clientY}, {x:rect.x, y:rect.y, w: rect.width, h: rect.height })) {
+						controls.object = inspectboxCamera;
+						controls.update();
+					} else {
+						controls.object = camera;
+						controls.update();
+					}
+				}, true );
+
+			}
+
+			function within(p, bb) {
+				if( bb.x <= p.x && p.x <= bb.x + bb.w && bb.y <= p.y && p.y <= bb.y + bb.h ) {
+					return true;
+				}
+				return false;
+			}
+
+			var inspectbox,  inspectboxControls;
+			var inspectboxCamera, inspectboxScene, inspectboxRenderer, inspectboxRenderer, inspectboxLight;
+			var inspectboxText;
+
+			function initInspectBox() {
+
+				inspectbox = document.createElement( 'div' );
+				inspectbox.id = "inspectbox"
+				document.body.appendChild( inspectbox );
+
+				inspectboxText = document.createElement( 'div' );
+				inspectboxText.innerText = "";
+				inspectbox.appendChild( inspectboxText );
+
+				inspectboxButtons = document.createElement( 'div' );
+				inspectboxButtons.innerHTML = "<button onclick='back()'>Back</button><button onclick='next()'>Next</button><b id='childinfo'></b>";
+				inspectbox.appendChild( inspectboxButtons );
+
+				inspectboxRenderer = new THREE.WebGLRenderer( { antialias: true } );
+				inspectboxRenderer.setPixelRatio( window.devicePixelRatio );
+				inspectboxRenderer.setSize( window.innerWidth/4, window.innerHeight/4 );
+				inspectboxRenderer.shadowMap.enabled = true;
+				inspectbox.appendChild( inspectboxRenderer.domElement );
+				inspectbox.style.position = "absolute";
+				inspectbox.style.top = "100px";
+
+				inspectboxCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+				inspectboxCamera.position.set( 100, 200, 300 );
+
+				controls.object = inspectboxCamera;
+				controls.update();
+
+				inspectboxScene = new THREE.Scene();
+				inspectboxScene.background = new THREE.Color( 0x000000 );
+				inspectboxScene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+
+				inspectboxLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+				inspectboxLight.position.set( 0, 200, 0 );
+				inspectboxScene.add( inspectboxLight );
+
+				inspectboxLight = new THREE.DirectionalLight( 0xffffff );
+				inspectboxLight.position.set( 0, 200, 100 );
+				inspectboxLight.castShadow = true;
+				inspectboxLight.shadow.camera.top = 180;
+				inspectboxLight.shadow.camera.bottom = - 100;
+				inspectboxLight.shadow.camera.left = - 120;
+				inspectboxLight.shadow.camera.right = 120;
+				inspectboxScene.add( inspectboxLight );
+
+				//var cube = new THREE.Mesh( new THREE.CubeGeometry( 200, 200, 200 ), new THREE.MeshNormalMaterial() );
+				//cube.position.y = 150;
+				// add the object to the scene
+				//inspectboxScene.add( cube );
+			}
+
+			function next() {
+				manualControl = true;
+				if (iter == obj.children.length) {
+					return;
+				}
+				iter ++;
+				inspect(false);
+			}
+
+			function back() {
+				manualControl = true;
+				if (iter == 0) {
+					return;
+				}
+				iter --;
+				inspect(true);
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				if ( mixers.length > 0 ) {
+
+					for ( var i = 0; i < mixers.length; i ++ ) {
+
+						mixers[ i ].update( clock.getDelta() );
+
+					}
+
+				}
+
+				renderer.render( scene, camera );
+
+				inspectboxRenderer.render( inspectboxScene, inspectboxCamera );
+
+
+			}
+
+			var obj = null;
+			var iter = 0;
+			var wait = 100;
+			var selectedPart = null;
+			var light = null;
+			var helper = null;
+			var end = 0;
+			var mat = new THREE.MeshLambertMaterial({
+				color: 0xffef44,//0xefff60,//0xb67225,
+				transparent: true,
+				opacity: 0.1
+			})
+			function map(_start = 0, _end = 0) {
+				if (iter < end) {
+					iter ++;
+					inspect(false);
+				}
+				if (!manualControl) {
+					setTimeout(map, wait);
+				}
+			}
+
+
+			function inspect(_showLast) {
+				if (obj == null) {
+					obj = scene.getObjectByName("inspectedObject");
+					light = new THREE.PointLight(0xff0000);
+					light.intensity = 10;
+					helper = new THREE.PointLightHelper(light, 0.1);
+
+					end = obj.children.length;
+				}
+
+				//obj.children[iter].position.setY(150)
+				console.info(obj.children[iter]);
+				inspectboxText.innerText = obj.children[iter].name
+				document.getElementById("childinfo").innerText = iter + "/" + obj.children.length;
+				if (selectedPart != null) {
+					inspectboxScene.remove(selectedPart);
+				}
+				selectedPart = obj.children[iter].clone();
+				selectedPart.position.set(0, 100, 0)
+				selectedPart.visible = true;
+				inspectboxScene.add(selectedPart);
+
+				obj.children[iter].visible = _showLast;
+			}
+
+		</script>
+
+	</body>
+</html>

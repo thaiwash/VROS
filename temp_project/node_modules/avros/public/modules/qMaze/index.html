@@ -1,0 +1,162 @@
+<meta charset="utf-8"/>
+<html>
+<head>
+<script src="../OSModule.js"></script>
+<script src="qMaze.js"></script>
+</head>
+<body>
+<script>
+var q = new qMaze({x: 10, y:10, width:256, height:256 })
+q.init()
+setInterval(function() {
+	q.update() 
+}, 50)
+//q.drawButtons()
+
+	/*
+<canvas id = "omfg"></canvas>
+<input type=text id="t3xt" style="position:absolute;top:10px; left:500px;">
+<textarea type=text id="0ut" style="position:absolute;top:40px; left:500px;"></textarea>
+	var xy
+	var c = document.getElementById("omfg");
+	var ctx = c.getContext("2d");
+	var down = false
+	var inited = false
+	var lines = []
+document.onmousedown = function(e) {
+if (e.clientX > 500) {return}
+	xy = [e.clientX, e.clientY]
+	if (inited)
+	down = true
+}
+
+document.onmousedown = function(e) {
+if (e.clientX > 500) {return}
+	xy = [e.clientX, e.clientY]
+	if (inited)
+	down = true
+}
+
+document.onkeypress = function(e) {
+	if (e.key == "Enter") {
+		console.log(document.getElementById("t3xt").value)
+		commands(document.getElementById("t3xt").value)
+	}
+}
+
+function commands(command) {
+	if (command == "init") {
+		init()
+		console.log("load")
+	}
+	if (command == "load") {
+		lines = JSON.parse(document.getElementById("0ut").value)
+		clear()
+		redraw()
+	}
+}
+
+function init() {
+	inited = true
+}
+
+function clear() {
+	ctx.beginPath();
+	ctx.rect(0, 0, 1000, 1000);
+	ctx.fillStyle = "white";
+	ctx.fill();
+}
+
+function redraw() {
+	ctx.lineWidth = 10;
+	for (var i = 0; i < lines.length; i ++) {
+	//console.log("rgb("+lines[i].r+","+lines[i].g+","+lines[i].b+")")
+		ctx.strokeStyle = "rgb("+lines[i].r+","+lines[i].g+","+lines[i].b+")"
+		ctx.beginPath();
+		ctx.moveTo(lines[i].x, lines[i].y);
+		ctx.lineTo(lines[i].x2, lines[i].y2);
+		ctx.stroke(); 
+	}
+}
+
+document.onmousemove = function(e) {
+	if (!down) {
+		return
+	}
+	
+	clear();
+	redraw();
+	ctx.beginPath();
+	ctx.moveTo(xy[0], xy[1]);
+	ctx.lineTo(e.clientX, e.clientY);
+	ctx.stroke(); 
+	
+	//xy = [e.clientX, e.clientY]
+}
+
+document.onmouseup = function(e) {
+	if (!down) {
+		return
+	}
+	
+	down = false
+	
+	if (Math.abs(xy[0] - e.clientX) + Math.abs(xy[1] - e.clientY) < 5) {
+		selectLine(e.clientX, e.clientY)
+	} else {
+	
+	ctx.beginPath();
+	ctx.moveTo(xy[0], xy[1]);
+	ctx.lineTo(e.clientX, e.clientY);
+	ctx.stroke(); 
+	lines.push({
+		"id": Math.random(), 
+		"x": xy[0], 
+		"y": xy[1], 
+		"x2": e.clientX, 
+		"y2": e.clientY, 
+		"r": 0, 
+		"g": 0, 
+		"b": 0
+	})
+	document.getElementById("0ut").value = JSON.stringify(lines, 0, 4)
+	}
+}
+
+var selectedLine = null
+var selectedLineSave = null
+
+function selectLine(x, y) {
+	var color = ctx.getImageData(x, y, 1, 1).data;
+	console.log(color);
+	
+	for (var i = 0; i < lines.length; i ++) {
+		var r = lines[i].r
+		lines[i].r = 177;
+		clear()
+		redraw()
+		lines[i].r = r;
+		if (ctx.getImageData(x, y, 1, 1).data[0] == 177) {
+			if (selectedLine != null) {
+				selectedLine.r = selectedLineSave[0]
+				selectedLine.g = selectedLineSave[1]
+				selectedLine.b = selectedLineSave[2]
+			}
+			selectedLineSave = [lines[i].r, lines[i].g, lines[i].b]
+			lines[i].r = 255
+			lines[i].g = 255
+			lines[i].b = 0
+			selectedLine=lines[i]
+		}
+		clear()
+		redraw()
+	}
+}
+
+
+*/
+
+</script>
+
+</body>
+</html>
