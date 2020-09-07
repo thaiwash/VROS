@@ -1,5 +1,10 @@
+//  convert DSCN0001.jpg -distort barrel '0.0 -0.019966 0.0' DSCN0001_pt.jpg
+
+// https://github.com/amoyjs/amoy-filters
+
 
 //https://www.shadertoy.com/view/wtBXRz
+// image magic has one working too
 
 
 // based on meshula https://www.shadertoy.com/view/MlSXR3
