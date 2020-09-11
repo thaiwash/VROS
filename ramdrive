@@ -1,0 +1,4 @@
+sudo mkdir /var/memfs 
+sudo echo "tmpfs /var/memfs tmpfs nodev,nosuid,size=10M 0 0" >> /etc/fstab
+sudo mount -a
+df
